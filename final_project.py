@@ -95,6 +95,8 @@ class Bullet:
             DrawRectangleRec(self.rect, self.color)
 class Player:
     def __init__(self, x, y):
+        self.is_hitbox_visible = False
+        
         # Store starting position for reset
         self.start_x = x 
         self.start_y = y
@@ -127,6 +129,9 @@ class Player:
         if IsMouseButtonPressed(MOUSE_BUTTON_LEFT):
             self.bullet = Bullet(self.x + self.width / 2, self.y + self.height / 2, 1, BLUE, self)
 
+        # 2. Dev keys for player testing
+        if IsKeyPressed(KEY_H):
+            self.is_hitbox_visible = not self.is_hitbox_visible
         # --- Velocity Zeroing for Stability ---
         if self.is_grounded:
             self.vy = 0.0
@@ -252,10 +257,10 @@ class Player:
     def draw(self):
         """Draws the player at their world coordinates."""
         DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
-        if self.is_grounded:
-             DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), WHITE)
-        else:
-             DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), GRAY)
+        
+        if self.is_hitbox_visible:
+            DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
+
         if self.bullet:
             self.bullet.draw()
 
