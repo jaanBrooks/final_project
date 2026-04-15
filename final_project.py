@@ -2,7 +2,8 @@ import random
 import math
 from raylib import *
 from pyray import *
-from settings.py import *
+from settings import *
+from game_enums import *
 
 # --- Game Constants ---
 
