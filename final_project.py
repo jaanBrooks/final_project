@@ -110,22 +110,44 @@ class Player:
         self.vx = 0.0
         self.vy = 0.0
         self.is_grounded = False
+        self.is_sprinting = False
+        self.state = PLAYER_STATE.IDLE
+        
         self.bullet = None
-
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
+    def transition(self, state):
+        
+        match state:
+            
+            case PLAYER_STATE.IDLE:
+                self.state = PLAYER_STATE.IDLE
+                
+            case PLAYER_STATE.WALKING:
+                self.state = PLAYER_STATE.WALKING
+            
+            case PLAYER_STATE.SLIDING:
+                self.state = PLAYER_STATE.SLIDING
+            
+            case PLAYER_STATE.JUMPING:
+                self.state = PLAYER_STATE.JUMPING
 
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
         self.vx = 0.0
-        sprint_amplifier = 1.0
+        
         if IsKeyDown(KEY_LEFT_SHIFT):
-            sprint_amplifier = 1.75
-        if IsKeyDown(KEY_LEFT) or IsKeyDown(KEY_A):
-            self.vx = -PLAYER_SPEED * sprint_amplifier
-        if IsKeyDown(KEY_RIGHT) or IsKeyDown(KEY_D):
-            self.vx = PLAYER_SPEED * sprint_amplifier
+            self.is_sprinting = True
+        else:
+            self.is_sprinting = False
+        speed_multiplier = SPRINT_AMPLIFIER if self.is_sprinting else 1.0
+        
+        if IsKeyDown(KEY_A):
+            self.vx = -PLAYER_SPEED * speed_multiplier
+        if IsKeyDown(KEY_D):
+            self.vx = PLAYER_SPEED * speed_multiplier
+        
         if IsMouseButtonPressed(MOUSE_BUTTON_LEFT):
             self.bullet = Bullet(self.x + self.width / 2, self.y + self.height / 2, 1, BLUE, self)
 
