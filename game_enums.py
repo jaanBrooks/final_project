@@ -5,5 +5,11 @@ class PLAYER_STATE(IntEnum):
     SLIDING = 2
     JUMPING = 3
 
-pass
+class AnimationType(IntEnum):
+    REPEATING = 1
+    ONESHOT = 2
+
+class Direction(IntEnum):
+    LEFT = -1
+    RIGHT = 1
     

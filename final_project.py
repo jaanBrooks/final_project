@@ -2,8 +2,10 @@ import random
 import math
 from raylib import *
 from pyray import *
+from anim import *
 from settings import *
 from game_enums import *
+from os.path import join
 
 # --- Game Constants ---
 
@@ -90,7 +92,12 @@ class Player:
         self.is_grounded = False
         self.is_sprinting = False
         self.state = PLAYER_STATE.IDLE
+        self.anim = Animation(0, 7, 0, 1, .1, .1, AnimationType.REPEATING, 0, 8)
+        self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
+    def startup(self):
         
+        self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png')) 
+        self.texture = self.idle_texture   
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
@@ -157,6 +164,8 @@ class Player:
         # --- Safety Clamp to World Bounds ---
         self.x = max(0, min(self.x, WORLD_WIDTH - self.width))
         
+        self.anim.update(delta_time)
+        self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
     def handle_tile_collision(self, level, axis):
         """Performs AABB collision checks against solid tiles and resolves the collision."""
         player_rect = self.get_rect()
@@ -249,13 +258,10 @@ class Player:
 
     def draw(self):
         """Draws the player at their world coordinates."""
-        DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
-        
+        #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
+        draw_texture_pro(self.texture, self.frame, Rectangle(self.x - PLAYER_TILE_WIDTH / 3, self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
         if self.is_hitbox_visible:
             DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
-
-        if self.bullet:
-            self.bullet.draw()
 
 class Enemy:
     def __init__(self, x, y):
@@ -417,7 +423,8 @@ def main():
     
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
-    player = Player(TILE_SIZE * 2, TILE_SIZE * 2) 
+    player = Player(TILE_SIZE * 2, TILE_SIZE * 2)
+    player.startup() # Load player textures/animations
     score = 0
     game_state = "PLAYING" 
     
