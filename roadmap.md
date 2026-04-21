@@ -29,7 +29,7 @@ Implementation: took constants and put them in settings.py
 Commit message: refactor(Global Constants) put constants in settings.py file
 next to do more refactoring to set up code base
 
-Date: 2026/04/15, 1:18 p.m.
+Date: 2026/12/15, 1:18 p.m.
 Goal
 Refactor code for ease of parsing my main project file
 Implementation: added game_enums.py file
@@ -74,15 +74,33 @@ Commit message: refactor( got rid of old bullet mechanic from lab09)
 Next to do:
 will try and implement sliding mechanic but may again have more refactoring
 
-Date: 2026/04/10, 2:15 p.m.
+Date: 2026/04/20, 6:30 p.m.
 Goal
 Get basic anim state set up, just such an idle animation is displayed
 Implementation
 Animation state file copied from Mid semester project, player state, player frame, and player texture added to player class
-Technical Plan/Credit: same implementation of bullet in 12.Gun_fight.py. Sourced from that file
+Technical Plan/Credit: same implementation of mid semester project
 Content Credit: https://monopixelart.itch.io/character-pack/download/eyJpZCI6MjkxMjQ1NywiZXhwaXJlcyI6MTc3NjcyMjc4Nn0%3d%2eowqBwbVFL%2fr7%2fvw9ARcBlW9Sxgs%3d
-sprite sheet for coin texture
 Commit message feat(): add player idle animation
 Next/TO DO :
 add player slide animation
 
+Date: 2026/04/20, 8:15 p.m.
+Goal
+get running animation setup
+Implementation
+Technical Plan/Credit: same implementation of mid semester project
+Commit message feat(): add player running animation
+Next/TO DO :
+add player slide animation
+
+
+Date: 2026/04/20, 8:58 p.m.
+Goal
+Get player slide animation to work along with player input to cause slide to happen when player is in the run state
+Implementation
+had to go back and change the order of input listeners in the running state, additionally had to make it such that three different animations occurred while sliding because the texture pack came with three different ones for that so kinda a mini transition state in slide update
+Technical Plan/Credit: same implementation of mid semester project
+Commit message feat(): add player slide animation and slide activation (no hitbox adjustment yet)
+Next/TO DO :
+add htibox management for sliding

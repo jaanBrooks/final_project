@@ -112,30 +112,32 @@ class Player:
             
             case PLAYER_STATE.IDLE:
                 self.state = PLAYER_STATE.IDLE
-                self.last = 7
+                self.anim.last = 7
                 self.anim.cur = 0
                 self.anim.type = AnimationType.REPEATING
                 self.anim.duration = .1
                 self.anim.duration_left = self.anim.duration
-                self.sprites_in_row = 8
+                self.anim.sprites_in_row = 8
                 self.texture = self.idle_texture
                 
             case PLAYER_STATE.RUNNING:
                 self.state = PLAYER_STATE.RUNNING
-                self.last = 7
+                self.anim.last = 7
                 self.anim.cur = 0
                 self.anim.type = AnimationType.REPEATING
                 self.anim.duration = .1
                 self.anim.duration_left = self.anim.duration
-                self.sprites_in_row = 8
+                self.anim.sprites_in_row = 8
                 self.texture = self.running_texture
             case PLAYER_STATE.SLIDING:
+                self.anim.done = False
                 self.state = PLAYER_STATE.SLIDING
-                self.last = 1
+                self.anim.last = 1
                 self.anim.cur = 0
                 self.anim.type = AnimationType.ONESHOT
+                self.anim.duration = .1
                 self.anim.duration_left = self.anim.duration
-                self.sprites_in_row = 2
+                self.anim.sprites_in_row = 2
                 self.texture = self.slide_start_texture
             
             case PLAYER_STATE.JUMPING:
@@ -144,6 +146,7 @@ class Player:
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
         self.vx = 0.0
+        
         match self.state:
             case PLAYER_STATE.IDLE:
                 if IsKeyDown(KEY_A):
@@ -159,7 +162,9 @@ class Player:
             case PLAYER_STATE.RUNNING:
                 if (IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_UP)) and self.is_grounded:
                     self.vy = JUMP_VELOCITY
-                if IsKeyDown(KEY_A):
+                if IsKeyPressed(KEY_S) and self.is_grounded:
+                    self.transition(PLAYER_STATE.SLIDING)
+                elif IsKeyDown(KEY_A):
                     self.vx = -PLAYER_SPEED
                     self.direction = Direction.LEFT
                 elif IsKeyDown(KEY_D):
@@ -168,27 +173,29 @@ class Player:
                 else:
                     self.transition(PLAYER_STATE.IDLE)
             case PLAYER_STATE.SLIDING:
+                self.vx = SLIDE_VELOCITY * self.direction.value
                 if self.texture == self.slide_start_texture:
                     
                     if self.anim.done:
                         self.texture = self.slide_middle_texture
-                        self.start = 0
+                        self.anim.start = 0
                         self.last = 3
                         self.anim.cur = 0
-                        self.anim.type = AnimationType.REPEATING
-                        self.duration = .2
-                        self.duration_left = self.duration
-                        self.sprites_in_row = 4
+                        self.anim.duration = .3
+                        self.anim.duration_left = self.anim.duration
+                        self.anim.sprites_in_row = 4
+                        self.anim.done = False
+                
                 elif self.texture == self.slide_middle_texture:
                     if self.anim.done:
                         self.texture = self.slide_end_texture
-                        self.start = 0
-                        self.last = 1
+                        self.anim.start = 0
+                        self.anim.last = 1
                         self.anim.cur = 0
-                        self.anim.type = AnimationType.ONESHOT
-                        self.duration = .1
-                        self.duration_left = self.duration
-                        self.sprites_in_row = 2
+                        self.anim.duration = .1
+                        self.anim.duration_left = self.anim.duration
+                        self.anim.sprites_in_row = 2
+                        self.anim.done = False
                 else:
                     if self.anim.done:
                         self.transition(PLAYER_STATE.IDLE)
