@@ -15,6 +15,7 @@ TILE_AIR = 0
 TILE_SOLID = 1
 TILE_COIN = 2 
 TILE_ENEMY = 3 
+TILE_SOLID_TOP_HALF = 4
 
 # --- Expanded Level Tilemap Definition (50x16 tiles = 2000px wide) ---
 LEVEL = [
@@ -32,7 +33,7 @@ LEVEL = [
     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 0, 4, 4, 4, 4, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 TILE_ROWS = len(LEVEL)
@@ -255,7 +256,10 @@ class Player:
         return False
     def handle_tile_collision(self, level, axis):
         """Performs AABB collision checks against solid tiles and resolves the collision."""
-        player_rect = self.get_rect()
+        if self.state == PLAYER_STATE.SLIDING:
+            player_rect = self.get_rect_sliding()
+        else:
+            player_rect = self.get_rect()
         px, py, pw, ph = player_rect
         
         min_col = int(px / TILE_SIZE)
@@ -269,8 +273,11 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_SOLID:
-                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                if level[row][col] == TILE_SOLID or (level[row][col] == TILE_SOLID_TOP_HALF):
+                    if level[row][col] == TILE_SOLID_TOP_HALF:
+                        tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
+                    else:
+                        tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                     
                     if CheckCollisionRecs(player_rect, tile_rect):
                         
@@ -348,7 +355,10 @@ class Player:
         #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
         draw_texture_pro(self.texture, self.frame, Rectangle(self.x - PLAYER_TILE_WIDTH / 3, self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
         if self.is_hitbox_visible:
-            DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
+            if self.state == PLAYER_STATE.SLIDING:
+                DrawRectangleLines(int(self.x), int(self.y + self.height * 0.5), int(self.width), int(self.height * 0.5), RED)
+            else:
+                DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
 
 class Enemy:
     def __init__(self, x, y):
@@ -402,7 +412,8 @@ class Enemy:
                 
                 if level[row][col] == TILE_SOLID:
                     tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                    
+                elif level[row][col] == TILE_SOLID_TOP_HALF:
+                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE / 2)    
                     if CheckCollisionRecs(enemy_rect, tile_rect):
                         
                         if axis == 'X':
@@ -455,6 +466,12 @@ def draw_level(level):
                 
                 DrawRectangle(x, y, TILE_SIZE, TILE_SIZE, DARKGRAY)
                 DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE, BLACK)
+            if tile_value == TILE_SOLID_TOP_HALF:
+                x = col * TILE_SIZE
+                y = row * TILE_SIZE
+                
+                DrawRectangle(x, y, TILE_SIZE, TILE_SIZE // 2, DARKGRAY)
+                DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE // 2, BLACK)
                 
 def draw_coins(coins):
     """Draws the active coins as small yellow diamonds (polygons)."""
