@@ -94,25 +94,49 @@ class Player:
         self.state = PLAYER_STATE.IDLE
         self.anim = Animation(0, 7, 0, 1, .1, .1, AnimationType.REPEATING, 0, 8)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
+        self.direction = Direction.RIGHT
     def startup(self):
-        
-        self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png')) 
+        self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
+        self.slide_start_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_start.png'))
+        self.slide_middle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_middle.png'))
+        self.slide_end_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_end.png'))
+        self.running_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'run.png'))
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
     def transition(self, state):
-        
+        if self.state == state:
+            return
         match state:
             
             case PLAYER_STATE.IDLE:
                 self.state = PLAYER_STATE.IDLE
+                self.last = 7
+                self.anim.cur = 0
+                self.anim.type = AnimationType.REPEATING
+                self.anim.duration = .1
+                self.anim.duration_left = self.anim.duration
+                self.sprites_in_row = 8
+                self.texture = self.idle_texture
                 
-            case PLAYER_STATE.WALKING:
-                self.state = PLAYER_STATE.WALKING
-            
+            case PLAYER_STATE.RUNNING:
+                self.state = PLAYER_STATE.RUNNING
+                self.last = 7
+                self.anim.cur = 0
+                self.anim.type = AnimationType.REPEATING
+                self.anim.duration = .1
+                self.anim.duration_left = self.anim.duration
+                self.sprites_in_row = 8
+                self.texture = self.running_texture
             case PLAYER_STATE.SLIDING:
                 self.state = PLAYER_STATE.SLIDING
+                self.last = 1
+                self.anim.cur = 0
+                self.anim.type = AnimationType.ONESHOT
+                self.anim.duration_left = self.anim.duration
+                self.sprites_in_row = 2
+                self.texture = self.slide_start_texture
             
             case PLAYER_STATE.JUMPING:
                 self.state = PLAYER_STATE.JUMPING
@@ -120,28 +144,59 @@ class Player:
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
         self.vx = 0.0
-        
-        if IsKeyDown(KEY_LEFT_SHIFT):
-            self.is_sprinting = True
-        else:
-            self.is_sprinting = False
-        speed_multiplier = SPRINT_AMPLIFIER if self.is_sprinting else 1.0
-        
-        if IsKeyDown(KEY_A):
-            self.vx = -PLAYER_SPEED * speed_multiplier
-        if IsKeyDown(KEY_D):
-            self.vx = PLAYER_SPEED * speed_multiplier
+        match self.state:
+            case PLAYER_STATE.IDLE:
+                if IsKeyDown(KEY_A):
+                    self.vx = -PLAYER_SPEED
+                    self.direction = Direction.LEFT
+                    self.transition(PLAYER_STATE.RUNNING)
+                elif IsKeyDown(KEY_D):
+                    self.vx = PLAYER_SPEED
+                    self.direction = Direction.RIGHT
+                    self.transition(PLAYER_STATE.RUNNING)
+                if (IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_UP)) and self.is_grounded:
+                    self.vy = JUMP_VELOCITY
+            case PLAYER_STATE.RUNNING:
+                if (IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_UP)) and self.is_grounded:
+                    self.vy = JUMP_VELOCITY
+                if IsKeyDown(KEY_A):
+                    self.vx = -PLAYER_SPEED
+                    self.direction = Direction.LEFT
+                elif IsKeyDown(KEY_D):
+                    self.vx = PLAYER_SPEED
+                    self.direction = Direction.RIGHT
+                else:
+                    self.transition(PLAYER_STATE.IDLE)
+            case PLAYER_STATE.SLIDING:
+                if self.texture == self.slide_start_texture:
+                    
+                    if self.anim.done:
+                        self.texture = self.slide_middle_texture
+                        self.start = 0
+                        self.last = 3
+                        self.anim.cur = 0
+                        self.anim.type = AnimationType.REPEATING
+                        self.duration = .2
+                        self.duration_left = self.duration
+                        self.sprites_in_row = 4
+                elif self.texture == self.slide_middle_texture:
+                    if self.anim.done:
+                        self.texture = self.slide_end_texture
+                        self.start = 0
+                        self.last = 1
+                        self.anim.cur = 0
+                        self.anim.type = AnimationType.ONESHOT
+                        self.duration = .1
+                        self.duration_left = self.duration
+                        self.sprites_in_row = 2
+                else:
+                    if self.anim.done:
+                        self.transition(PLAYER_STATE.IDLE)
+                    
         
         # 2. Dev keys for player testing
         if IsKeyPressed(KEY_H):
             self.is_hitbox_visible = not self.is_hitbox_visible
-        # --- Velocity Zeroing for Stability ---
-        if self.is_grounded:
-            self.vy = 0.0
-           
-        # 2. Handle Input (Jump)
-        if (IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_UP)) and self.is_grounded:
-            self.vy = JUMP_VELOCITY
 
         # 3. Apply Gravity
         self.vy += GRAVITY * delta_time
@@ -166,6 +221,7 @@ class Player:
         
         self.anim.update(delta_time)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
+        self.frame.width *= self.direction.value
     def handle_tile_collision(self, level, axis):
         """Performs AABB collision checks against solid tiles and resolves the collision."""
         player_rect = self.get_rect()
