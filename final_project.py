@@ -85,7 +85,7 @@ class Player:
         self.y = y
         self.width = PLAYER_WIDTH
         self.height = PLAYER_HEIGHT
-        
+        self.collision_rec = (self.x, self.y, self.width, self.height)
         # Physics
         self.vx = 0.0
         self.vy = 0.0
@@ -105,6 +105,8 @@ class Player:
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
+    def get_rect_sliding(self):
+        return self.x, self.y + PLAYER_HEIGHT * 0.5, self.width, self.height * 0.5
     def transition(self, state):
         if self.state == state:
             return
@@ -229,6 +231,28 @@ class Player:
         self.anim.update(delta_time)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
         self.frame.width *= self.direction.value
+    #easy way to check if the player will collide with a tile with normal hitbox but not with sliding hitbox so we now know whether to keep sliding or not
+    def check_slide_head_collision(self, level):
+        player_norm_rect = self.get_rect()
+        player_slide_rect = self.get_rect_sliding()
+        
+        px, py, pw, ph = player_norm_rect
+        min_col = int(px / TILE_SIZE)
+        max_col = int((px + pw) / TILE_SIZE)
+        min_row = int(py / TILE_SIZE)
+        max_row = int((py + ph) / TILE_SIZE)
+        for row in range(min_row, max_row + 1):
+            for col in range(min_col, max_col + 1):
+                
+                if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
+                    continue
+                
+                if level[row][col] == TILE_SOLID:
+                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                    
+                    if CheckCollisionRecs(player_norm_rect, tile_rect) and not CheckCollisionRecs(player_slide_rect, tile_rect):
+                        return True
+        return False
     def handle_tile_collision(self, level, axis):
         """Performs AABB collision checks against solid tiles and resolves the collision."""
         player_rect = self.get_rect()
