@@ -104,3 +104,76 @@ Technical Plan/Credit: same implementation of mid semester project
 Commit message feat(): add player slide animation and slide activation (no hitbox adjustment yet)
 Next/TO DO :
 add htibox management for sliding
+
+Date: 2026/04/20, 8:58 p.m.
+Goal
+create a function to determine if the player head will collide upon stopping the slide
+copied code from handle_tile_collision but slightly altered where it checks if a collision would happen with the normal collision box and the slide collision box, if there is an xor of these we know that we need to keep sliding this is important for the slide mechanic later as outlined by this forum post
+Technical Plan/Credit: https://forum.gamemaker.io/index.php?threads/how-would-i-make-a-sliding-mechanic-in-my-2d-platformer-game.117854/
+
+"Slide state: moves forward until a timer hits zero, you have a smaller hitbox so you can fit under things. It checks if you would get stuck if you would stop sliding, and if so extends the counter a little bit (so sliding will keep going until you won't get stuck when it ends)"
+
+Commit message feat(): add xor collision detection for sliding mechanic extender
+Next/TO DO :
+actually change hitbox for sliding mechanic, and create a tile that can be slid under but not ran under
+
+Date: 2026/04/20, 10:12 p.m.
+Goal
+Get a block which is half tile height such that I can slide under it but not run through at normal height
+Implementation
+Created a new tile type corresponding to 4, where it is a half tile size, made it so the parser and collision methods treat it differently half height and currentyl the player can slide under it but not run through
+Technical Plan/Credit: intuited it
+Commit message feat(): add half height tiles
+Next/TO DO :
+make it so the player doesnt glitch when they stop sliding underneath one of these tiles, ie make the slide continue until they are out of a slide area
+
+Date: 2026/04/20, 10:25 p.m.
+Goal
+Fix glitch where player may stand up while underneath sliding blocks
+Implementation
+before we transition to idle, we call check the xor collision funciton i made earlier
+Technical Plan/Credit: kind of what https://forum.gamemaker.io/index.php?threads/how-would-i-make-a-sliding-mechanic-in-my-2d-platformer-game.117854/ this said but with my own workaround using the code for collision already present
+Commit message feat(): making it such that slide lasts atleast necessary time to prevent standing up underneath slide blocks
+Next/TO DO :
+look into variable jump height mechanics
+
+Date 2026/04/21, 12:06 Am
+Goal:
+make it such that player is able to have a variable jump height dependent on how long they hold down the space bar
+Implementation
+player now stores a:
+self.can_big_jump
+self.jumpTimeTimer
+
+input for jumping is now held by a utility method called handle jump input:
+if IsKeyPressed(KEY_SPACE) and self.is_grounded:
+            self.is_grounded = False
+            self.vy = JUMP_VELOCITY
+            
+            self.can_big_jump = True
+            self.jumpTimeTimer = JUMP_TIME
+        if IsKeyDown(KEY_SPACE) and self.can_big_jump:
+            if self.jumpTimeTimer > 0:
+                self.vy = JUMP_VELOCITY
+                self.jumpTimeTimer -= dt
+            else:
+                self.can_big_jump = False
+basically allows for the extesion of the application of the jump velocity until a timer runs out and then holding it down doesn;t do anything anymore
+Technical plan/ credit: watched this video:
+https://www.youtube.com/watch?v=avtm_F9HU3c&t=32s
+copied the code for the jump handling here(found in the comment section of the youtube video):
+https://github.com/ProjectMarzDev/Knight-Game/blob/main/Knight%20Game/knight.cpp
+Commit message: feat(implemented variable jump heights)
+Next To do:
+make it such that jump is animated
+
+Date: 2026/04/21, 1:27 a.m.
+Goal
+Get jumping animation to work
+Implementation
+simply loaded in jump animation, made it load in with proper fields like oneshot and frames being right number
+Technical Plan/Credit: intuited it
+Commit message feat(): add jump animation
+Next/TO DO :
+explore how to do coffee speed boost
+
