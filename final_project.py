@@ -33,7 +33,7 @@ LEVEL = [
     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 2, 0, 4, 4, 4, 4, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 0, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 TILE_ROWS = len(LEVEL)
@@ -151,6 +151,7 @@ class Player:
         self.vx = 0.0
         
         match self.state:
+            
             case PLAYER_STATE.IDLE:
                 if IsKeyDown(KEY_A):
                     self.vx = -PLAYER_SPEED
@@ -162,6 +163,7 @@ class Player:
                     self.transition(PLAYER_STATE.RUNNING)
                 if (IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_UP)) and self.is_grounded:
                     self.vy = JUMP_VELOCITY
+            
             case PLAYER_STATE.RUNNING:
                 if (IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_UP)) and self.is_grounded:
                     self.vy = JUMP_VELOCITY
@@ -175,6 +177,7 @@ class Player:
                     self.direction = Direction.RIGHT
                 else:
                     self.transition(PLAYER_STATE.IDLE)
+            
             case PLAYER_STATE.SLIDING:
                 self.vx = SLIDE_VELOCITY * self.direction.value
                 if self.texture == self.slide_start_texture:
@@ -190,7 +193,7 @@ class Player:
                         self.anim.done = False
                 
                 elif self.texture == self.slide_middle_texture:
-                    if self.anim.done:
+                    if self.anim.done and not self.check_slide_head_collision(level):
                         self.texture = self.slide_end_texture
                         self.anim.start = 0
                         self.anim.last = 1
@@ -201,7 +204,8 @@ class Player:
                         self.anim.done = False
                 else:
                     if self.anim.done:
-                        self.transition(PLAYER_STATE.IDLE)
+                        if not self.check_slide_head_collision(level):
+                            self.transition(PLAYER_STATE.IDLE)
                     
         
         # 2. Dev keys for player testing
@@ -248,8 +252,11 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_SOLID:
-                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                if level[row][col] == TILE_SOLID or (level[row][col] == TILE_SOLID_TOP_HALF):
+                    if level[row][col] == TILE_SOLID_TOP_HALF:
+                        tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
+                    else:
+                        tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                     
                     if CheckCollisionRecs(player_norm_rect, tile_rect) and not CheckCollisionRecs(player_slide_rect, tile_rect):
                         return True
