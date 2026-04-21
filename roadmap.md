@@ -177,3 +177,22 @@ Commit message feat(): add jump animation
 Next/TO DO :
 explore how to do coffee speed boost
 
+Date 2026/04/21 2:21 PM
+Goal
+Implement coffee collectible, sprite, and collection
+Implementation: created a new TILE_COFFEE = 5, in parse level i added a coffees list coffees = []
+
+if the newlevel[r][c] = Tile coffee we append a coffee to the list
+
+parse level now returns coffees and no longer collectibles coins are now separate from collectibles
+
+check collection was also refactored to make collection hitbox more streamlined and also reusable for any type of collectible
+
+Also utilized a sprite from online for the coffee draw function of draw texture pro
+
+Technical plan/credit: utilized pre-existing collection methods from coins
+
+commit message: feat(added coffee collectible with sprite and collection/collision)
+Next TO/DO:
+implement coffee collection giving the player a bankable speed boost (can be used for later)
+

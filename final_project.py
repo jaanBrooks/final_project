@@ -17,6 +17,7 @@ TILE_SOLID = 1
 TILE_COIN = 2 
 TILE_ENEMY = 3 
 TILE_SOLID_TOP_HALF = 4
+TILE_COFFEE = 5
 
 # --- Expanded Level Tilemap Definition (50x16 tiles = 2000px wide) ---
 LEVEL = [
@@ -30,7 +31,7 @@ LEVEL = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
@@ -53,6 +54,7 @@ def parse_level(level):
     """
     coins = []
     enemies = []
+    coffees = []
     # Create a deep copy of the level to modify the tiles, leaving the original map intact
     new_level = [row[:] for row in level] 
     
@@ -70,14 +72,17 @@ def parse_level(level):
                 # Enemy position is top-left
                 enemies.append(Enemy(x, y))
                 new_level[r][c] = TILE_AIR 
+            
+            elif new_level[r][c] == TILE_COFFEE:
+                coffees.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
+                new_level[r][c] = TILE_AIR
                 
-    return new_level, coins, enemies
+    return new_level, coins, enemies, coffees
 
 
 # --- Game Object Classes ---
 class Player:
     def __init__(self, x, y):
-        self.is_hitbox_visible = False
         
         # Store starting position for reset
         self.start_x = x 
@@ -99,7 +104,7 @@ class Player:
         self.direction = Direction.RIGHT
         self.can_big_jump = False
         self.jumpTimeTimer = JUMP_TIME
-    
+        self.sprint_timer = 0.0
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
@@ -211,10 +216,7 @@ class Player:
                 if self.is_grounded:
                     self.transition(PLAYER_STATE.IDLE)
         
-        # 2. Dev keys for player testing
-        if IsKeyPressed(KEY_H):
-            self.is_hitbox_visible = not self.is_hitbox_visible
-
+        
         # 3. Apply Gravity
         self.vy += GRAVITY * delta_time
         if self.vy > 1000:
@@ -342,15 +344,16 @@ class Player:
     def check_collection(self, collectibles):
         """Checks for collision with coins and returns indices of collected coins."""
         collected_indices = []
-        player_rect = self.get_rect()
-        coin_collision_size = TILE_SIZE * 0.5
+        if self.state == PLAYER_STATE.SLIDING:
+            player_rect = self.get_rect_sliding()
+        else:
+            player_rect = self.get_rect()
+        
         
         for i, (cx, cy) in enumerate(collectibles):
-            coin_x = cx - coin_collision_size / 2
-            coin_y = cy - coin_collision_size / 2
-            coin_rect = (coin_x, coin_y, coin_collision_size, coin_collision_size)
+            collectible_rect = (cx + 8, cy + 8, TILE_SIZE - 16, TILE_SIZE - 16)
             
-            if CheckCollisionRecs(player_rect, coin_rect):
+            if CheckCollisionRecs(player_rect, collectible_rect):
                 collected_indices.append(i)
                 
         return collected_indices
@@ -389,11 +392,11 @@ class Player:
         self.vy = 0.0
         self.is_grounded = False
 
-    def draw(self):
+    def draw(self, is_hitbox_visible):
         """Draws the player at their world coordinates."""
         #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
         draw_texture_pro(self.texture, self.frame, Rectangle(self.x - PLAYER_TILE_WIDTH / 3, self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
-        if self.is_hitbox_visible:
+        if is_hitbox_visible:
             if self.state == PLAYER_STATE.SLIDING:
                 DrawRectangleLines(int(self.x), int(self.y + self.height * 0.5), int(self.width), int(self.height * 0.5), RED)
             else:
@@ -511,7 +514,13 @@ def draw_level(level):
                 
                 DrawRectangle(x, y, TILE_SIZE, TILE_SIZE // 2, DARKGRAY)
                 DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE // 2, BLACK)
-                
+
+def draw_coffees(coffees, coffee_texture,is_hitbox_mode):
+    for cx, cy in coffees:
+        draw_texture_pro(coffee_texture, Rectangle(0, 0, 64, 64), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
+        if is_hitbox_mode:
+            DrawRectangleLines(int(cx) + 8, int(cy) + 8, int(TILE_SIZE) - 16, int(TILE_SIZE) - 16, BLUE)
+
 def draw_coins(coins):
     """Draws the active coins as small yellow diamonds (polygons)."""
     radius = TILE_SIZE * 0.3 / 2 
@@ -562,7 +571,7 @@ def main():
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
-    game_level, collectibles, enemies = parse_level(LEVEL)
+    game_level, coins, enemies, coffees = parse_level(LEVEL)
     
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
@@ -577,12 +586,17 @@ def main():
     camera.offset = Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2) 
     camera.rotation = 0.0
     camera.zoom = 1.0
+    is_hitbox_mode = False
+    
+    #textures
+    coffee_texture = load_texture(join('Items','coffee.png'))
 
     # --- Game Loop ---
     while not WindowShouldClose():
         
         delta_time = GetFrameTime()
-
+        if IsKeyPressed(KEY_H):
+            is_hitbox_mode = not is_hitbox_mode
         # --- Update ---
         if game_state == "PLAYING":
             player.update(delta_time, game_level)
@@ -593,12 +607,19 @@ def main():
             update_camera(camera, player, WORLD_WIDTH, WORLD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
 
             # Check for coin collection
-            collected_indices = player.check_collection(collectibles)
+            collected_indices = player.check_collection(coins)
             if collected_indices:
                 for index in sorted(collected_indices, reverse=True):
-                    collectibles.pop(index)
+                    coins.pop(index)
                     score += 10
-            
+
+            # Check for coffee collection
+            collected_coffee_indices = player.check_collection(coffees)
+            if collected_coffee_indices:
+                for index in sorted(collected_coffee_indices, reverse=True):
+                    coffees.pop(index)
+                    player.sprint_timer = COFFEE_SPRINT_DURATION
+
             # Check for enemy collision (Stomp/Death/Reset)
             hit_type, enemy_index = player.check_enemy_collision(enemies)
 
@@ -625,14 +646,15 @@ def main():
         draw_level(game_level)
 
         # 2. Draw Collectibles
-        draw_coins(collectibles)
+        draw_coins(coins)
+        draw_coffees(coffees, coffee_texture,is_hitbox_mode)
             
         # 3. Draw Enemies
         for enemy in enemies:
             enemy.draw()
 
         # 4. Draw Player 
-        player.draw()
+        player.draw(is_hitbox_mode)
         
         # End the 2D camera mode
         EndMode2D()
