@@ -196,3 +196,16 @@ commit message: feat(added coffee collectible with sprite and collection/collisi
 Next TO/DO:
 implement coffee collection giving the player a bankable speed boost (can be used for later)
 
+Date 2026/04/22 2:37 PM
+Goal
+Make it so that collecting coffee increases coffee count and then player can press left-shift sprint to activate caffeinated mode which multiplies left and right movement speed
+Implementation: 
+collection of coffee items checks if player coffee count < COFFEE COUNT
+in handle left and right input, check if player is pressing left shift and coffee count is > 0 and player isnt already sprinting, if so set sprinting to true and increment sprint timer
+Then every update call will call check and handle speed boost which increases sprint speed multiplier and while the player is sprinting decrement timer until reaches zero and from then on speed boost will be 1.0
+
+Technical plan/credit: no help, basically used same thing from dodge in mid semester project
+
+commit message: feat(added functionality of coffee feature to make player caffeinated (horizontal speed multiplier))
+Next TO/DO:
+create visual effect for when you are caffeinated 

@@ -31,7 +31,7 @@ LEVEL = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 5, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
@@ -97,7 +97,7 @@ class Player:
         self.vx = 0.0
         self.vy = 0.0
         self.is_grounded = False
-        self.is_sprinting = False
+        self.is_sprinting = True
         self.state = PLAYER_STATE.IDLE
         self.anim = Animation(0, 7, 0, 1, .1, .1, AnimationType.REPEATING, 0, 8)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
@@ -105,6 +105,8 @@ class Player:
         self.can_big_jump = False
         self.jumpTimeTimer = JUMP_TIME
         self.sprint_timer = 0.0
+        self.sprint_speed_multiplier = 1.0
+        self.coffee_count = 0
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
@@ -167,14 +169,21 @@ class Player:
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
         self.vx = 0.0
+        self.sprint_speed_multiplier = 1.0
+        
+        if self.is_sprinting:
+            self.handle_speed_boost(delta_time)
         
         match self.state:
             
             case PLAYER_STATE.IDLE:
+                self.handle_speed_boost(delta_time)
                 self.handle_left_and_right_input(delta_time)
+                
                 self.handle_jump_input(delta_time)
             
             case PLAYER_STATE.RUNNING:
+                self.handle_speed_boost(delta_time)
                 self.handle_jump_input(delta_time)
                 self.handle_left_and_right_input(delta_time)
                 if IsKeyPressed(KEY_S):
@@ -183,6 +192,7 @@ class Player:
                     self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.SLIDING:
+                self.handle_speed_boost(delta_time)
                 self.vx = SLIDE_VELOCITY * self.direction.value
                 if self.texture == self.slide_start_texture:
                     
@@ -211,6 +221,7 @@ class Player:
                         if not self.check_slide_head_collision(level):
                             self.transition(PLAYER_STATE.IDLE)
             case PLAYER_STATE.JUMPING:
+                self.handle_speed_boost(delta_time)
                 self.handle_jump_input(delta_time)
                 self.handle_left_and_right_input(delta_time)
                 if self.is_grounded:
@@ -239,15 +250,26 @@ class Player:
         self.anim.update(delta_time)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
         self.frame.width *= self.direction.value
-    
+    def handle_speed_boost(self, delta_time):
+        if self.is_sprinting:
+            self.sprint_timer -= delta_time
+            self.sprint_speed_multiplier = SPRINT_AMPLIFIER
+            if self.sprint_timer <= 0:
+                self.is_sprinting = False
+                self.sprint_timer = 0
+            
     def handle_left_and_right_input(self, dt):
+        if IsKeyDown(KEY_LEFT_SHIFT) and not self.is_sprinting and self.coffee_count > 0:
+            self.is_sprinting = True
+            self.coffee_count -= 1
+            self.sprint_timer += COFFEE_SPRINT_INCREMENTER
         if IsKeyDown(KEY_A):
-            self.vx = -PLAYER_SPEED
+            self.vx = -PLAYER_SPEED * self.sprint_speed_multiplier
             self.direction = Direction.LEFT
             if self.is_grounded:
                 self.transition(PLAYER_STATE.RUNNING)
         elif IsKeyDown(KEY_D):
-            self.vx = PLAYER_SPEED
+            self.vx = PLAYER_SPEED * self.sprint_speed_multiplier
             self.direction = Direction.RIGHT
             if self.is_grounded:
                 self.transition(PLAYER_STATE.RUNNING)
@@ -342,7 +364,7 @@ class Player:
                         px, py, pw, ph = player_rect
                         
     def check_collection(self, collectibles):
-        """Checks for collision with coins and returns indices of collected coins."""
+        """Checks for collision with collectibles and returns indices of collected items."""
         collected_indices = []
         if self.state == PLAYER_STATE.SLIDING:
             player_rect = self.get_rect_sliding()
@@ -401,7 +423,8 @@ class Player:
                 DrawRectangleLines(int(self.x), int(self.y + self.height * 0.5), int(self.width), int(self.height * 0.5), RED)
             else:
                 DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
-
+        draw_text(PLAYER_STATE.get_state(self.state),200,200,11, BLACK)
+        draw_text(str(self.sprint_timer),int(self.x),250,11, BLACK)
 class Enemy:
     def __init__(self, x, y):
         # Position (top-left for collision)
@@ -614,11 +637,12 @@ def main():
                     score += 10
 
             # Check for coffee collection
-            collected_coffee_indices = player.check_collection(coffees)
-            if collected_coffee_indices:
-                for index in sorted(collected_coffee_indices, reverse=True):
-                    coffees.pop(index)
-                    player.sprint_timer = COFFEE_SPRINT_DURATION
+            if player.coffee_count < COFFEE_MAX:
+                collected_coffee_indices = player.check_collection(coffees)
+                if collected_coffee_indices:
+                    for index in sorted(collected_coffee_indices, reverse=True):
+                        coffees.pop(index)
+                        player.coffee_count += 1
 
             # Check for enemy collision (Stomp/Death/Reset)
             hit_type, enemy_index = player.check_enemy_collision(enemies)
