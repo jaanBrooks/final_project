@@ -209,3 +209,14 @@ Technical plan/credit: no help, basically used same thing from dodge in mid seme
 commit message: feat(added functionality of coffee feature to make player caffeinated (horizontal speed multiplier))
 Next TO/DO:
 create visual effect for when you are caffeinated 
+
+Date 2026/04/23 4:08 PM
+Goal
+Refactor tiles to use an enum
+Implementation: 
+self explanatory
+
+commit message: refactor(tiles now use enum)
+Next TO/DO:
+try and figure out wall slide mechanic
+

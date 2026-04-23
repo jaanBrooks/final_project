@@ -12,12 +12,13 @@ from os.path import join
 
 
 # --- Tilemap Definitions ---
-TILE_AIR = 0
+""" TILE_AIR = 0
 TILE_SOLID = 1
 TILE_COIN = 2 
 TILE_ENEMY = 3 
 TILE_SOLID_TOP_HALF = 4
 TILE_COFFEE = 5
+"""
 
 # --- Expanded Level Tilemap Definition (50x16 tiles = 2000px wide) ---
 LEVEL = [
@@ -63,19 +64,19 @@ def parse_level(level):
             x = c * TILE_SIZE
             y = r * TILE_SIZE
 
-            if new_level[r][c] == TILE_COIN:
+            if new_level[r][c] == TILE_STATE.COIN:
                 # Coin position is center
                 coins.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
-                new_level[r][c] = TILE_AIR 
+                new_level[r][c] = TILE_STATE.AIR 
             
-            elif new_level[r][c] == TILE_ENEMY:
+            elif new_level[r][c] == TILE_STATE.ENEMY:
                 # Enemy position is top-left
                 enemies.append(Enemy(x, y))
-                new_level[r][c] = TILE_AIR 
+                new_level[r][c] = TILE_STATE.AIR 
             
-            elif new_level[r][c] == TILE_COFFEE:
+            elif new_level[r][c] == TILE_STATE.COFFEE:
                 coffees.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
-                new_level[r][c] = TILE_AIR
+                new_level[r][c] = TILE_STATE.AIR
                 
     return new_level, coins, enemies, coffees
 
@@ -308,8 +309,8 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_SOLID or (level[row][col] == TILE_SOLID_TOP_HALF):
-                    if level[row][col] == TILE_SOLID_TOP_HALF:
+                if level[row][col] == TILE_STATE.SOLID or (level[row][col] == TILE_STATE.SOLID_TOP_HALF):
+                    if level[row][col] == TILE_STATE.SOLID_TOP_HALF:
                         tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
                     else:
                         tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
@@ -336,12 +337,13 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_SOLID or (level[row][col] == TILE_SOLID_TOP_HALF):
-                    if level[row][col] == TILE_SOLID_TOP_HALF:
-                        tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
-                    else:
-                        tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                    
+                if level[row][col] == TILE_STATE.SOLID or (level[row][col] == TILE_STATE.SOLID_TOP_HALF):
+                    match level[row][col]:
+                        case TILE_STATE.SOLID:
+                            tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                        case TILE_STATE.SOLID_TOP_HALF:
+                            tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
+
                     if CheckCollisionRecs(player_rect, tile_rect):
                         
                         if axis == 'X':
@@ -475,9 +477,9 @@ class Enemy:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_SOLID:
+                if level[row][col] == TILE_STATE.SOLID:
                     tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                elif level[row][col] == TILE_SOLID_TOP_HALF:
+                elif level[row][col] == TILE_STATE.SOLID_TOP_HALF:
                     tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE / 2)    
                     if CheckCollisionRecs(enemy_rect, tile_rect):
                         
@@ -525,13 +527,14 @@ def draw_level(level):
     for row in range(TILE_ROWS):
         for col in range(TILE_COLS):
             tile_value = level[row][col]
-            if tile_value == TILE_SOLID:
+            if tile_value == TILE_STATE.SOLID:
                 x = col * TILE_SIZE
                 y = row * TILE_SIZE
                 
                 DrawRectangle(x, y, TILE_SIZE, TILE_SIZE, DARKGRAY)
                 DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE, BLACK)
-            if tile_value == TILE_SOLID_TOP_HALF:
+            
+            if tile_value == TILE_STATE.SOLID_TOP_HALF:
                 x = col * TILE_SIZE
                 y = row * TILE_SIZE
                 
