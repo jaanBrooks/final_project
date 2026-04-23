@@ -32,10 +32,10 @@ LEVEL = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 5, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 5, 0, 0, 5, 5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
     [0, 0, 2, 0, 4, 0, 4, 4, 4, 4, 4, 4, 0, 4, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
@@ -108,6 +108,10 @@ class Player:
         self.sprint_timer = 0.0
         self.sprint_speed_multiplier = 1.0
         self.coffee_count = 0
+        
+        self.is_wall_sliding = False
+        self.is_wall_jumping = False
+        
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
@@ -239,11 +243,15 @@ class Player:
         
         # Apply X movement
         self.x += self.vx * delta_time
+        self.is_wall_sliding = False
         self.handle_tile_collision(level, 'X')
         
         # Apply Y movement
         self.y += self.vy * delta_time
         self.handle_tile_collision(level, 'Y')
+        
+        if not self.is_grounded and (IsKeyDown(KEY_A) or IsKeyDown(KEY_D)) and self.vx == 0:
+            self.is_wall_sliding = True
         
         # --- Safety Clamp to World Bounds ---
         self.x = max(0, min(self.x, WORLD_WIDTH - self.width))
@@ -343,10 +351,9 @@ class Player:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                         case TILE_STATE.SOLID_TOP_HALF:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
-
                     if CheckCollisionRecs(player_rect, tile_rect):
-                        
                         if axis == 'X':
+                            
                             if self.vx > 0: # Moving Right
                                 self.x = tile_rect[0] - self.width
                             elif self.vx < 0: # Moving Left
@@ -364,6 +371,7 @@ class Player:
                             
                         player_rect = self.get_rect()
                         px, py, pw, ph = player_rect
+                
                         
     def check_collection(self, collectibles):
         """Checks for collision with collectibles and returns indices of collected items."""
@@ -427,6 +435,9 @@ class Player:
                 DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
         draw_text(PLAYER_STATE.get_state(self.state),200,200,11, BLACK)
         draw_text(str(self.sprint_timer),int(self.x),250,11, BLACK)
+        draw_text(str("is wall sliding: " + str(self.is_wall_sliding)),int(self.x),270,11, BLACK)
+        draw_text(str("is grounded: " + str(self.is_grounded)),int(self.x),290,11, BLACK)
+        
 class Enemy:
     def __init__(self, x, y):
         # Position (top-left for collision)

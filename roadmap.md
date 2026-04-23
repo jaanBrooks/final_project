@@ -220,3 +220,19 @@ commit message: refactor(tiles now use enum)
 Next TO/DO:
 try and figure out wall slide mechanic
 
+Date 2026/04/22 4:44 PM
+Goal
+successfully detect if the player is wall sliding or not
+Implementation: 
+after checking collisions we check if the player has the three conditions met:
+1. they are inputting key A or key D
+2. they are not grounded
+3. horizontal velocity is 0
+
+These three ensure that the player is pressing up against a wall and then we set that flag to true
+
+Technical plan/credit: got the flags and general structure from https://gist.github.com/bendux/b6d7745ad66b3d48ef197a9d261dc8f6, but had to use my own logic for detection as they use a overlap method with a wall layer would require a whole restructuring to match their method so just doing my own
+
+commit message: feat(added detection of when the player should be wallsliding)
+Next TO/DO:
+get the player to actually slide when pressing against the wall in the air
