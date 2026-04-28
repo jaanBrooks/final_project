@@ -25,19 +25,19 @@ LEVEL = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 5, 0, 0, 5, 5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 2, 0, 4, 0, 4, 4, 4, 4, 4, 4, 0, 4, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0],
+    [1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
 ]
 TILE_ROWS = len(LEVEL)
 TILE_COLS = len(LEVEL[0])
@@ -88,12 +88,14 @@ class Player:
         # Store starting position for reset
         self.start_x = x 
         self.start_y = y
+        
         # Current position (top-left for collision)
         self.x = x
         self.y = y
         self.width = PLAYER_WIDTH
         self.height = PLAYER_HEIGHT
         self.collision_rec = (self.x, self.y, self.width, self.height)
+        
         # Physics
         self.vx = 0.0
         self.vy = 0.0
@@ -110,6 +112,9 @@ class Player:
         self.coffee_count = 0
         
         self.is_wall_sliding = False
+        self.wall_jump_lock_timer = 0.0
+        
+        
         self.is_wall_jumping = False
         
     def startup(self):
@@ -120,11 +125,13 @@ class Player:
         self.slide_end_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_end.png'))
         self.running_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'run.png'))
         self.jump_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'jump.png'))
+        self.wall_slide_middle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'wall_slide_middle.png'))
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
     def get_rect_sliding(self):
         return self.x, self.y + PLAYER_HEIGHT * 0.5, self.width, self.height * 0.5
+    
     def transition(self, state):
         if self.state == state:
             return
@@ -156,7 +163,7 @@ class Player:
                 self.anim.last = 1
                 self.anim.cur = 0
                 self.anim.type = AnimationType.ONESHOT
-                self.anim.duration = .1
+                self.anim.duration = .05
                 self.anim.duration_left = self.anim.duration
                 self.anim.sprites_in_row = 2
                 self.texture = self.slide_start_texture
@@ -170,12 +177,27 @@ class Player:
                 self.anim.duration = .1
                 self.anim.duration_left = self.anim.duration
                 self.anim.sprites_in_row = 6
+            case PLAYER_STATE.WALL_SLIDING:
+                self.state = PLAYER_STATE.WALL_SLIDING
+                self.texture = self.wall_slide_middle_texture
+                self.anim.last = 3
+                self.anim.cur = 0
+                self.anim.type = AnimationType.REPEATING
+                self.anim.duration = .1
+                self.anim.duration_left = self.anim.duration
+                self.anim.sprites_in_row = 4
 
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
-        self.vx = 0.0
         self.sprint_speed_multiplier = 1.0
-        
+
+        if self.wall_jump_lock_timer > 0:
+            self.wall_jump_lock_timer -= delta_time
+            self.vx = WALL_JUMP_POWER.x * self.direction
+        else:
+            self.is_wall_jumping = False
+            self.vx = 0.0
+
         if self.is_sprinting:
             self.handle_speed_boost(delta_time)
         
@@ -183,22 +205,29 @@ class Player:
             
             case PLAYER_STATE.IDLE:
                 self.handle_speed_boost(delta_time)
-                self.handle_left_and_right_input(delta_time)
+                
+                if not self.is_wall_jumping:
+                    self.handle_left_and_right_input(delta_time)
                 
                 self.handle_jump_input(delta_time)
             
             case PLAYER_STATE.RUNNING:
                 self.handle_speed_boost(delta_time)
                 self.handle_jump_input(delta_time)
-                self.handle_left_and_right_input(delta_time)
+                
+                if not self.is_wall_jumping:
+                    self.handle_left_and_right_input(delta_time)
+                
                 if IsKeyPressed(KEY_S):
                     self.transition(PLAYER_STATE.SLIDING)
                 if self.vx == 0:
                     self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.SLIDING:
+                will_bang_head = self.check_slide_head_collision(level)
                 self.handle_speed_boost(delta_time)
                 self.vx = SLIDE_VELOCITY * self.direction.value
+                    
                 if self.texture == self.slide_start_texture:
                     
                     if self.anim.done:
@@ -206,37 +235,52 @@ class Player:
                         self.anim.start = 0
                         self.last = 3
                         self.anim.cur = 0
-                        self.anim.duration = .3
+                        self.anim.duration = .15
                         self.anim.duration_left = self.anim.duration
                         self.anim.sprites_in_row = 4
                         self.anim.done = False
                 
                 elif self.texture == self.slide_middle_texture:
-                    if self.anim.done and not self.check_slide_head_collision(level):
+                    if self.anim.done and not will_bang_head:
                         self.texture = self.slide_end_texture
                         self.anim.start = 0
                         self.anim.last = 1
                         self.anim.cur = 0
-                        self.anim.duration = .1
+                        self.anim.duration = .025
                         self.anim.duration_left = self.anim.duration
                         self.anim.sprites_in_row = 2
                         self.anim.done = False
+                    elif will_bang_head and self.anim.done:
+                        self.vx = SLIDE_VELOCITY * self.direction * .8
                 else:
                     if self.anim.done:
+                        self.vx = SLIDE_VELOCITY * self.direction * .2
                         if not self.check_slide_head_collision(level):
                             self.transition(PLAYER_STATE.IDLE)
+            
             case PLAYER_STATE.JUMPING:
                 self.handle_speed_boost(delta_time)
                 self.handle_jump_input(delta_time)
-                self.handle_left_and_right_input(delta_time)
+                
+                if not self.is_wall_jumping:
+                    self.handle_left_and_right_input(delta_time)
                 if self.is_grounded:
                     self.transition(PLAYER_STATE.IDLE)
+            
+            case PLAYER_STATE.WALL_SLIDING:
+                if not self.is_wall_sliding:
+                    if self.is_grounded:
+                        self.transition(PLAYER_STATE.IDLE)
+                    else:
+                        self.transition(PLAYER_STATE.JUMPING)
+                else:
+                    self.handle_wall_jump_input()
         
         
         # 3. Apply Gravity
         self.vy += GRAVITY * delta_time
-        if self.vy > 1000:
-            self.vy = 1000
+        if self.vy > MAX_FALL_SPEED:
+            self.vy = MAX_FALL_SPEED
 
         # --- Reset grounded state at start of frame update ---
         self.is_grounded = False
@@ -250,15 +294,34 @@ class Player:
         self.y += self.vy * delta_time
         self.handle_tile_collision(level, 'Y')
         
-        if not self.is_grounded and (IsKeyDown(KEY_A) or IsKeyDown(KEY_D)) and self.vx == 0:
+        
+        if self.check_wall_slide():
             self.is_wall_sliding = True
+            self.transition(PLAYER_STATE.WALL_SLIDING)
+            self.y -= self.vy * delta_time * 0.7
         
         # --- Safety Clamp to World Bounds ---
         self.x = max(0, min(self.x, WORLD_WIDTH - self.width))
         
         self.anim.update(delta_time)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
-        self.frame.width *= self.direction.value
+        self.frame.width *= self.direction
+    
+    def check_wall_slide(self):
+        return not self.is_grounded and (IsKeyDown(KEY_A) and self.direction== Direction.LEFT or IsKeyDown(KEY_D) and self.direction == Direction.RIGHT) and self.vx == 0
+    
+    def handle_wall_jump_input(self):
+        
+        if IsKeyPressed(KEY_SPACE):
+            self.is_wall_jumping = True
+            self.is_wall_sliding = False
+            self.wall_jump_lock_timer = WALL_JUMP_DURATION
+            self.vy = WALL_JUMP_POWER.y
+            self.transition(PLAYER_STATE.JUMPING)
+
+            self.direction *= -1
+            self.vx = WALL_JUMP_POWER.x * self.direction
+    
     def handle_speed_boost(self, delta_time):
         if self.is_sprinting:
             self.sprint_timer -= delta_time
@@ -268,6 +331,7 @@ class Player:
                 self.sprint_timer = 0
             
     def handle_left_and_right_input(self, dt):
+        
         if IsKeyDown(KEY_LEFT_SHIFT) and not self.is_sprinting and self.coffee_count > 0:
             self.is_sprinting = True
             self.coffee_count -= 1
@@ -612,7 +676,7 @@ def main():
     
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
-    player = Player(TILE_SIZE * 2, TILE_SIZE * 2)
+    player = Player(TILE_SIZE * 2, TILE_SIZE * 12)
     player.startup() # Load player textures/animations
     score = 0
     game_state = "PLAYING" 
@@ -637,6 +701,8 @@ def main():
         # --- Update ---
         if game_state == "PLAYING":
             player.update(delta_time, game_level)
+            if player.y > WORLD_HEIGHT:
+                player.reset()
             # Update Enemies
             for enemy in enemies:
                 enemy.update(delta_time, game_level)

@@ -236,3 +236,37 @@ Technical plan/credit: got the flags and general structure from https://gist.git
 commit message: feat(added detection of when the player should be wallsliding)
 Next TO/DO:
 get the player to actually slide when pressing against the wall in the air
+
+
+Date: 2026/04/27, 9:09 p.m.
+Goal
+Get the player to slide on walls, and also be able to wall jump
+Implementation:
+Player now has a wall sliding state for the animation, in addition to a flag, a wall jump lock timer and a wall jump flag. Wall slide and jump Global constants are defined in the settings.py. Detection for wall sliding is the same before, and now sets the player in the wall sliding state. When the player is wall sliding, the affect of gravity is halved in this line if self.check_wall_slide():
+            self.is_wall_sliding = True
+            self.transition(PLAYER_STATE.WALL_SLIDING)
+            self.y -= self.vy * delta_time * 0.5
+
+we do this in this line because this check can not properly occur before checking tile collision on the x axis.
+
+When play is in state wall sliding, the input for handling wall jump input occurs, wherein if the player presses the space key the wall jump lock timer is set which locks the player from initiating input from the left and right keys so the player can actually experience proper x axis movement, and additionally there vy is increased and set to wall jump power global constant. Until this timer runs out at the beginning of the update function the player x movement is locked to get the wall jump
+Technical Plan/Credit: 
+
+https://gist.github.com/bendux/b6d7745ad66b3d48ef197a9d261dc8f6
+
+additionally I DID utilize chatGPT in integrating my approach, i did not have it generate code, but I did ask clarifying questions like "what is the purpose of the jump lock timer and why was the detection for is wall sliding off (it did point me in the right direction with respect to this because the legacy check utilized the key press "a" or "d", but needed to also use player direction)
+
+
+Commit message: feat() added player wall slide, and wall jump
+Next/TO DO : look into building the structure of the first tutorial level
+
+
+Date: 2026/04/28, 12:47 p.m.
+Goal
+Refactor movements, constants, and level 1 design to get a working tutorial level that demonstrates key features
+Implementation
+refactored constants to make it such that wall jump doesnt allow you to infinitely ascend, only 3 blocks wide, sliding is more fluid.
+Technical Plan/Credit: intuited it
+Commit message refactor(created first tutorial level and adjusted constants for movement (fine tuning))
+Next/TO DO :
+make coffee boost indicator
