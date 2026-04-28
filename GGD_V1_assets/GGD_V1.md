@@ -11,7 +11,8 @@ Personal Inspiration
 I wanted to make a game for which the average college student and alumni could relate to, and I plan on doing this through a game which exemplifies and embodies the stresses of Freshmen year. As someone who has stressed about grades, making sure I get to my scheduled events on time, and also taking care of my health, I really wanted to incorporate these challenges into my game. 
 
 Gameplay inspiration:
-Speedrunners is a video game which me and my friends in my townhouse have been playing almost daily for weeks now. It is a local couch co-op game where the objective is to outrun your opponents on a cyclical map. You gain advantages by using items, performing platforming tactics at opportune times, such as sliding, grapping, double jumping and sprinting and also choosing the better path when multiple are available. This creates a very engaging game where unlike most platformers where it doesn't really matter how you get to the end as long as you make it there, Speedrunners emphasizes attention to detail and trying to maximize your route. One could make the argument this relates to college, where it's not just about graduation, it's about maximizing your experience along the way which is why I think thematically it is a great source of inspiration. Gameplay wise it is also incredibly addicting and satisfying to perfect your route which is something I think would be so cool to emulate. 
+Speedrunners is a video game which me and my friends in my townhouse have been playing almost daily for weeks now. It is a local couch co-op game where the objective is to outrun your opponents on a cyclical map. You gain advantages by using items, performing platforming tactics at opportune times, such as sliding, grapping, double jumping and sprinting and also choosing the better path when multiple are available. This creates a very engaging game where unlike most platformers where it doesn't really matter how you get to the end as long as you make it there, Speedrunners emphasizes attention to detail and trying to maximize your route. One could make the argument this relates to college, where it's not just about graduation, it's about maximizing your experience along the way which is why I think thematically it is a great source of inspiration. Gameplay wise it is also incredibly addicting and satisfying to perfect your route which is something I think would be so cool to emulate.
+![alt text](speedrunners_ex.jpg)
 
 Concept
 Gameplay overiview:
@@ -43,10 +44,10 @@ Movement mechanics to learn in the first level:
 
 2.Sliding: allows the player to decrease height to fit into narrow gaps
 
-3.Wall Jumping: run into walls and jump that are marked a certain way such that you can wall jump off of them (maybe rock climbing wall as thats an activity i do at college)
+3.Wall Jumping: run into walls and ump that are marked a certain way such that you can wall jump off of them (maybe rock climbing wall as thats an activity i do at college)
 
 4.Sprint Boost: Running through a coffee stand will give you a dash boost to bank, hold down shift to utilize it
-![alt text](tutorial_level.jpg)
+![alt text](speedrunners_ex.jpg)
 Level two mechanics:
 The player will finally be at college where we can introduce a few new mechanics:
 
@@ -61,7 +62,9 @@ Player will lose weight with respect to things like carrots, avocados, chicken b
 The fatter you are the slower you are which is critical because it will affect your ability to make certain jumps and get to the endpoint on time
 
 Time meter: get to your specfic goal (midterm hall or office hours) before the time runs out, time runnning out is a game over condition
-![alt text](example_level.jpg)
+
+
+![alt text](example_level.png)
 
 Level progression:
 1st level start with getting accepted to college and then get to college learn basic mechanics
