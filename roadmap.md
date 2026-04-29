@@ -270,3 +270,18 @@ Technical Plan/Credit: intuited it
 Commit message refactor(created first tutorial level and adjusted constants for movement (fine tuning))
 Next/TO DO :
 make coffee boost indicator
+
+
+Date: 2026/04/29 2:00 PM
+Goal:
+implement particle effects for coffee boost
+Implementation:
+player now stores particles and when the coffee boost is activated particles are generated at that position
+Technical plan/credit:
+particles: https://github.com/nas-programmer/raylib_projects/blob/main/Particle%20System/main.cpp
+https://stackoverflow.com/questions/6339057/draw-transparent-rectangles-and-polygons-in-pygame
+First link for particle and particle management
+second link for color management and getting it to fade
+Commit message feat(implemented particles for coffee boost)
+Next to do:
+coffee boost meter bar and coffee collection HUD
