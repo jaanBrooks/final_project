@@ -285,3 +285,13 @@ second link for color management and getting it to fade
 Commit message feat(implemented particles for coffee boost)
 Next to do:
 coffee boost meter bar and coffee collection HUD
+
+Date: 2026/04/29 2:20 PM
+goal fix wall slide mechanic because before were able to keep wall sliding when you werent supposed to
+Implementation:
+set a flag that checks if a collision happened this frame on the x axis and added that to check wall slide
+Technical plan credit:
+asked ai to diagnose the issue, it gave a solution involving checking the tile next to the player but then I realized that we can just set a flag with the prexisting collision function and just use that way simpler
+Commit message (debug): fixed wall slide mechanic
+Next to do:
+coffee boost meter bar and coffee collection HUD

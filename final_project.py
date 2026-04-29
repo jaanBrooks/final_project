@@ -119,6 +119,8 @@ class Player:
         self.is_wall_jumping = False
         self.particles = None
         
+        self.collided_with_x = False
+        
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
@@ -276,6 +278,7 @@ class Player:
                     else:
                         self.transition(PLAYER_STATE.JUMPING)
                 else:
+                    self.vx = PLAYER_SPEED * self.direction # need this so the player keeps pressing into the wall and we get a collision every frame
                     self.handle_wall_jump_input()
         if self.particles:
             self.particles.update(Vector2(self.x + self.width / 2, self.y + self.height), delta_time)
@@ -291,6 +294,7 @@ class Player:
         # Apply X movement
         self.x += self.vx * delta_time
         self.is_wall_sliding = False
+        self.collided_with_x = False
         self.handle_tile_collision(level, 'X')
         
         # Apply Y movement
@@ -311,7 +315,7 @@ class Player:
         self.frame.width *= self.direction
     
     def check_wall_slide(self):
-        return not self.is_grounded and (IsKeyDown(KEY_A) and self.direction== Direction.LEFT or IsKeyDown(KEY_D) and self.direction == Direction.RIGHT) and self.vx == 0
+        return self.collided_with_x and not self.is_grounded and (IsKeyDown(KEY_A) and self.direction== Direction.LEFT or IsKeyDown(KEY_D) and self.direction == Direction.RIGHT) and self.vx == 0
     
     def handle_wall_jump_input(self):
         
@@ -428,6 +432,7 @@ class Player:
                             elif self.vx < 0: # Moving Left
                                 self.x = tile_rect[0] + TILE_SIZE
                             self.vx = 0.0 
+                            self.collided_with_x = True
                             
                         elif axis == 'Y':
                             if self.vy >= 0: # Falling (Hitting Ground)
