@@ -343,7 +343,7 @@ class Player:
         if IsKeyDown(KEY_LEFT_SHIFT) and not self.is_sprinting and self.coffee_count > 0:
             self.is_sprinting = True
             self.coffee_count -= 1
-            self.sprint_timer += COFFEE_SPRINT_INCREMENTER
+            self.sprint_timer += COFFEE_SPRINT_DURATION
             self.particles = System(Vector2(self.x + self.width / 2, self.y + self.height))
         if IsKeyDown(KEY_A):
             self.vx = -PLAYER_SPEED * self.sprint_speed_multiplier
@@ -502,6 +502,9 @@ class Player:
         """Draws the player at their world coordinates."""
         #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
         draw_texture_pro(self.texture, self.frame, Rectangle(self.x - PLAYER_TILE_WIDTH / 3, self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
+        if self.is_sprinting:
+            DrawRectangleLines(int(self.x), int(self.y)+ int(self.height) + 3,40, 3, BROWN)
+            DrawRectangleGradientV(int(self.x), int(self.y)+ int(self.height) + 3,int(40 * self.sprint_timer / COFFEE_SPRINT_DURATION), 3, ORANGE, WHITE)
         if self.particles:
             self.particles.draw()
         if is_hitbox_visible:

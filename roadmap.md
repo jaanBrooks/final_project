@@ -295,3 +295,13 @@ asked ai to diagnose the issue, it gave a solution involving checking the tile n
 Commit message (debug): fixed wall slide mechanic
 Next to do:
 coffee boost meter bar and coffee collection HUD
+
+Date: 2026/04/30 2:40 PM
+implement coffee boost meter
+Implementation:
+little bar that renders underneath player that decreases as the sprint timer goes donwn
+Technical plan credit:
+same thing i did in mid semester project for the dash indicator
+Commit message (feature): coffee boost meter
+Next to do:
+coffee collection HUD
