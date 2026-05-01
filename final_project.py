@@ -33,6 +33,7 @@ def parse_level(level, tile_rows, tile_cols):
     enemies = []
     coffees = []
     yappers = []
+    beers = []
     # Create a deep copy of the level to modify the tiles, leaving the original map intact
     new_level = [row[:] for row in level] 
     
@@ -52,17 +53,32 @@ def parse_level(level, tile_rows, tile_cols):
             
             elif new_level[r][c] == TILE_STATE.TILE_YAPPER:
                 yappers.append(Yapper(x, y))
+            
+            elif new_level[r][c] == TILE_STATE.BEER:
+                beers.append((x, y))
+                new_level[r][c] = TILE_STATE.AIR
                 
-    return new_level, coins, enemies, coffees, yappers
+    return new_level, coins, enemies, coffees, yappers, beers
+
+
+# Utility function to get level parameters based on level number
+def get_level_params(level_to_set):
+    time_left_before_decrement = DURATION_BEFORE_DECREMENT
+    
+    if level_to_set == GAME_LEVEL.ONE:
+        game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
+        time_left_in_level = LEVEL_ONE_DURATION
+        
+    elif level_to_set == GAME_LEVEL.TWO:
+        game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
+        time_left_in_level = LEVEL_TWO_DURATION
+       
+    return game_level, coins, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement
 
 
 # --- Game Object Classes ---
 class Player:
     def __init__(self, x, y):
-        
-        # Store starting position for reset
-        self.start_x = x 
-        self.start_y = y
         
         # Current position (top-left for collision)
         self.x = x
@@ -95,13 +111,15 @@ class Player:
         self.collided_with_x = False
         self.reach_level_end = False
         
-        self.freshmen_fifteen_meter_active = False
-        self.freshmen_fifteen_meter = 6
+        self.freshmen_fifteen_meter = 0
         
         self.tile_rows = TILE_ROWS_LEVEL_1
         self.tile_cols = TILE_COLS_LEVEL_1
         self.world_width = WORLD_WIDTH_LEVEL_1
         self.world_height = WORLD_HEIGHT_LEVEL_1
+        
+        self.start_x = PLAYER_WIDTH * 2 
+        self.start_y = self.world_height - TILE_SIZE * 2
         
         self.yap_timer = 0
         self.yap_message = "Blah BLAH blah bLah . . . ."
@@ -471,9 +489,41 @@ class Player:
         """Resets the player to their starting position."""
         self.x = self.start_x
         self.y = self.start_y
+
         self.vx = 0.0
         self.vy = 0.0
+
         self.is_grounded = False
+        self.is_wall_sliding = False
+        self.is_wall_jumping = False
+        self.collided_with_x = False
+        self.reach_level_end = False
+
+        self.wall_jump_lock_timer = 0.0
+        self.jumpTimeTimer = JUMP_TIME
+        self.can_big_jump = False
+
+        self.yap_timer = 0
+        
+        self.freshmen_fifteen_meter = 0
+        
+        self.is_sprinting = False
+        self.sprint_timer = 0.0
+        self.sprint_speed_multiplier = 1.0
+        self.particles = None
+
+        self.direction = Direction.RIGHT
+        self.state = PLAYER_STATE.IDLE
+        self.texture = self.idle_texture
+
+        self.anim.last = 7
+        self.anim.cur = 0
+        self.anim.type = AnimationType.REPEATING
+        self.anim.duration = .1
+        self.anim.duration_left = self.anim.duration
+        self.anim.sprites_in_row = 8
+        self.anim.done = False
+        self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
 
     def draw(self, is_hitbox_visible):
         """Draws the player at their world coordinates."""
@@ -497,7 +547,7 @@ class Player:
         if self.yap_timer > 0:
             draw_text(self.yap_message, int(self.x - (10* self.direction)),int( self.y - 10), 10, BLACK)
             DrawRectangleLines(int(self.x - 15), int( self.y - 20),140, 9, BLACK)
-            DrawRectangleGradientV(int(self.x - 15), int( self.y - 20),int(100 * self.yap_timer / YAP_DURATION), 9, PURPLE, RED)
+            DrawRectangleGradientV(int(self.x - 15), int( self.y - 20),int(140 * self.yap_timer / YAP_DURATION), 9, PURPLE, RED)
 class Yapper:
     def __init__(self, x, y):
         self.x = x
@@ -548,6 +598,11 @@ def draw_coffees(coffees, coffee_texture,is_hitbox_mode):
         if is_hitbox_mode:
             DrawRectangleLines(int(cx) + 8, int(cy) + 8, int(TILE_SIZE) - 16, int(TILE_SIZE) - 16, BLUE)
 
+def draw_beers(beers, beer_texture,is_hitbox_mode):
+    for cx, cy in beers:
+        draw_texture_pro(beer_texture, Rectangle(0, 0, beer_texture.width, beer_texture.height), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
+        if is_hitbox_mode:
+            DrawRectangleLines(int(cx) + 8, int(cy) + 8, int(TILE_SIZE) - 16, int(TILE_SIZE) - 16, BLUE)
 def draw_coins(coins):
     """Draws the active coins as small yellow diamonds (polygons)."""
     radius = TILE_SIZE * 0.3 / 2 
@@ -598,7 +653,7 @@ def main():
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
-    game_level, coins, enemies, coffees, yappers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
+    game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
     tile_rows = TILE_ROWS_LEVEL_1
     tile_cols = TILE_COLS_LEVEL_1
     world_height = WORLD_HEIGHT_LEVEL_1
@@ -622,6 +677,8 @@ def main():
     is_hitbox_mode = False
     
     #textures
+    scale_texture = load_texture('scale.png')
+    beer_texture = load_texture("beer_texture.png")
     coffee_texture = load_texture(join('Items','coffee.png'))
     coffee_outline_texture = load_texture(join('Items','coffee_outline.png'))
     bg_texture = load_texture('backgroundFP.png')
@@ -674,19 +731,31 @@ def main():
                     player.reach_level_end = False
                     game_state = GAME_STATE.PLAYING
                     level_num = GAME_LEVEL.TWO
+                    player.x = PLAYER_WIDTH * 2
+                    player.y = world_height - TILE_SIZE * 2
+                    player.start_y = player.y
                     time_left_in_level = LEVEL_ONE_DURATION
                     time_left_before_decrement = DURATION_BEFORE_DECREMENT
                     tile_cols = TILE_COLS_LEVEL_2
                     tile_rows = TILE_ROWS_LEVEL_2
                     player.tile_rows = tile_rows
                     player.tile_cols = tile_cols
-                    game_level, coins, enemies, coffees, yappers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
+                    game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
                     background_rect = Rectangle(0,0, TILE_SIZE * tile_cols, TILE_SIZE * tile_rows)
                 pass
             
             case GAME_STATE.LOST:
+                if is_key_pressed(KEY_R):
+                    player.reset()
+                    game_level, coins, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
+                    game_state = GAME_STATE.PLAYING
                 pass
+            
             case GAME_STATE.PLAYING:
+                if IsKeyPressed(KEY_R):
+                    player.reset()
+                    game_level, coins, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
+                    game_state = GAME_STATE.PLAYING
                 player.update(delta_time, game_level)
                 for yapper in yappers:
                     yapper.update(delta_time)
@@ -699,6 +768,7 @@ def main():
                     else:
                         time_left_in_level -= LEVEL_DURATION_DECREMENT + player.freshmen_fifteen_meter
                     time_left_before_decrement = DURATION_BEFORE_DECREMENT
+                
                 if time_left_in_level <= 0:
                     game_state = GAME_STATE.LOST
                 
@@ -725,7 +795,15 @@ def main():
                         for index in sorted(collected_coffee_indices, reverse=True):
                             coffees.pop(index)
                             player.coffee_count += 1
-                            
+                
+                beer_collected_indices = player.check_collection(beers)
+                
+                if beer_collected_indices:
+                    for index in sorted(beer_collected_indices, reverse=True):
+                        beers.pop(index)
+                        if player.freshmen_fifteen_meter < 15:
+                            player.freshmen_fifteen_meter += 3
+                           
                 if player.reach_level_end:
                     game_state = next_state
 
@@ -736,19 +814,24 @@ def main():
         BeginDrawing()
         ClearBackground(SKYBLUE)
         match game_state:
+            
             case GAME_STATE.TITLE:
                 draw_texture_pro(title_texture, Rectangle(0,0,title_texture.width, title_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to START", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 5, 30, WHITE)
+            
             case GAME_STATE.INTRO_EMAIL:
                 draw_texture_pro(acceptance_texture, Rectangle(0,0,acceptance_texture.width, acceptance_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+            
             case GAME_STATE.MONTAGE:
                 draw_texture_pro(montage_texture, Rectangle(0,0,montage_texture.width, montage_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
                 draw_text("THE FOLLOWING WEEKS. . .", 20, 40, 30, WHITE)
+            
             case GAME_STATE.OFFICIAL_ENROLLMENT:
                 draw_texture_pro(official_enrollment_texture, Rectangle(0,0,official_enrollment_texture.width, official_enrollment_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+            
             case GAME_STATE.LOST:
                 draw_text("YOU_LOST", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 10, RED)
             
@@ -766,7 +849,7 @@ def main():
 
                 # 2. Draw Collectibles
                 draw_coffees(coffees, coffee_texture,is_hitbox_mode)
-                    
+                draw_beers(beers, beer_texture, is_hitbox_mode)  
 
                 # 4. Draw Player 
                 player.draw(is_hitbox_mode)
@@ -778,7 +861,7 @@ def main():
                 
                 debug_text = f"Grounded: {player.is_grounded} | Enemies: {len(enemies)}".encode('utf-8')
                 DrawText(debug_text, 10, 10, 20, BLACK) 
-                
+                draw_text(str(level_num), 300, 20, 20, RED)
                 draw_rectangle_rounded_lines_ex(coffee_count_rect, 2.0, 10,1.0,WHITE)
                 draw_rectangle_rounded(coffee_count_rect, 2.0, 10,coffee_count_rect_color_one)
                 draw_text("COFFEE",SCREEN_WIDTH - 50, SCREEN_HEIGHT - 30, 9, YELLOW)
@@ -790,11 +873,12 @@ def main():
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 if player.coffee_count >= 2:
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
-                
+                if level_num != GAME_LEVEL.ONE:
+                    draw_texture_pro(scale_texture, Rectangle(0,0,scale_texture.width,scale_texture.height), Rectangle(SCREEN_WIDTH // 2 - (50), 20, 100, 100), Vector2(0,0), 0.0, WHITE)
+                    draw_text("+" + str(player.freshmen_fifteen_meter) + " lbs", SCREEN_WIDTH // 2 - (22), 38, 14, RED  )
                 draw_text("TIME_LEFT: " + str(time_left_in_level), SCREEN_WIDTH -160, 60, 15, RED)
                 draw_text("TIME_LEFT before decrement: " + str(time_left_before_decrement), SCREEN_WIDTH -350, 90, 15, RED)
         EndDrawing()
-
     # --- De-Initialization ---
     CloseWindow()
 

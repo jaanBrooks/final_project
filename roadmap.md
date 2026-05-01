@@ -410,4 +410,38 @@ Commit message: feat(yapper npc interaction and animation): added NPC that locks
 Next/TO DO:
 implement beer and salad collectible
 
+Date: 2026/05/1 6:30 PM
+Goal: implement beer collection which affects freshmen 15 meter
+Implementation:
+literally same thing as coffee just changes different fields
+Technical plan / credit:
+got sprite on google search will list later trying to rush rn
+Commit message (feature): beer collection and freshmen 15 meter incrementation
+Next to do:
+display for freshmen 15 meter
+level 2 design layout
+level 3 design layout
+
+Date: 2026/05/1 6:51 PM
+Goal: implemented Freshmen 15 scale display and hud
+Implementation:
+literally just drawing fields available
+Technical plan / credit:
+got sprite on google search will list later trying to rush rn
+Commit message (feature): freshmen fifteen meter HUD display
+Next to do:
+level 2 design layout
+level 3 design layout
+
+Date: 2026/05/1 7:52 PM
+Goal: implemented player reset and level reset
+Implementation:
+for player reset, just make fields as they were at start of level, for level reset, call parse level in a new function called get fields and return all appropriate starting fields for level and set them
+Technical plan / credit:
+seems intuitive, but it took me over an hour to get all the fields set appropriately 
+Commit message (feature): appropriate level and player reset
+Next to do:
+level 2 design layout
+
+
 
