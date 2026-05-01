@@ -159,6 +159,7 @@ class Player:
                 self.anim.duration = .1
                 self.anim.duration_left = self.anim.duration
                 self.anim.sprites_in_row = 6
+            
             case PLAYER_STATE.WALL_SLIDING:
                 self.state = PLAYER_STATE.WALL_SLIDING
                 self.texture = self.wall_slide_middle_texture
@@ -362,6 +363,7 @@ class Player:
         max_col = int((px + pw) / TILE_SIZE)
         min_row = int(py / TILE_SIZE)
         max_row = int((py + ph) / TILE_SIZE)
+        
         for row in range(min_row, max_row + 1):
             for col in range(min_col, max_col + 1):
                 
@@ -390,6 +392,8 @@ class Player:
         min_row = int(py / TILE_SIZE)
         max_row = int((py + ph) / TILE_SIZE)
 
+        original_vy = self.vy #needed to prevent shooting up bug
+        
         for row in range(min_row, max_row + 1):
             for col in range(min_col, max_col + 1):
                 
@@ -423,10 +427,11 @@ class Player:
                             if self.vy >= 0: # Falling (Hitting Ground)
                                 self.y = tile_rect[1] - self.height
                                 self.is_grounded = True 
-                            elif self.vy < 0: # Jumping (Hitting Ceiling)
+                            elif original_vy < 0: # Jumping (Hitting Ceiling)
                                 self.y = tile_rect[1] + TILE_SIZE
                                 
                             self.vy = 0.0 
+                            return
                 
                         
     def check_collection(self, collectibles):
@@ -626,6 +631,22 @@ def main():
                     game_state = GAME_STATE.MONTAGE
             
             case GAME_STATE.MONTAGE:
+                if IsKeyPressed(KEY_S):
+                    world_width = WORLD_WIDTH_LEVEL_2
+                    world_height = WORLD_HEIGHT_LEVEL_2
+                    player.world_width = world_width
+                    player.world_height = world_height
+                    player.reach_level_end = False
+                    game_state = GAME_STATE.PLAYING
+                    level_num = GAME_LEVEL.TWO
+                    time_left_in_level = LEVEL_ONE_DURATION
+                    time_left_before_decrement = DURATION_BEFORE_DECREMENT
+                    tile_cols = TILE_COLS_LEVEL_2
+                    tile_rows = TILE_ROWS_LEVEL_2
+                    player.tile_rows = tile_rows
+                    player.tile_cols = tile_cols
+                    game_level, coins, enemies, coffees = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
+                    background_rect = Rectangle(0,0, TILE_SIZE * tile_cols, TILE_SIZE * tile_rows)
                 pass
             
             case GAME_STATE.LOST:

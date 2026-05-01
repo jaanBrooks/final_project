@@ -365,13 +365,23 @@ Commit message (feature): level timer implementation with lose state timer <= 0
 Next to do:
 make this timer look pretty and the you lost screen and resetting a level
 
-Date: 2026/05/1 2:09 PM
+Date: 2026/05/1 2:40 PM
 moved level information in levels.py and refactored final_project.py to utilize this new file which stores everything
 Implementation:
 refactoring, kept running and finding errors, going to the line with command click and replacing old constants either with local variables or arguments
 Technical plan / credit:
 refactoring not much technicality
 Commit message (refactor): moved level data into own file for ease of use for levels 2 and 3
+Next to do:
+start making level 2 to implement freshmen 15 display
+
+Date: 2026/05/1 4:07 PM
+fixed collision issue where jumping between intersection of two blocks from beneath shot the player up between
+Implementation:
+Store the original vy before loop because you want to use this before it gets changed by a collsion to know if the player should go up or below a block
+Technical plan / credit:
+Spent like an hour trying to figure it out by myself so I asked ai and it was literally a two line fix
+Commit message (debug):fixed jumping between two blocks from beneath bug
 Next to do:
 start making level 2 to implement freshmen 15 display
 
