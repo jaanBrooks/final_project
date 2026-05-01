@@ -116,6 +116,9 @@ class Player:
         self.collided_with_x = False
         self.reach_level_end = False
         
+        self.freshmen_fifteen_meter_active = False
+        self.freshmen_fifteen_meter = 6
+        
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
@@ -585,7 +588,8 @@ def main():
     score = 0
     game_state = GAME_STATE.TITLE
     next_state = GAME_STATE.OFFICIAL_ENROLLMENT
-    
+    time_left_in_level = LEVEL_ONE_DURATION
+    time_left_before_decrement = DURATION_BEFORE_DECREMENT
     # --- Camera Initialization ---
     camera = Camera2D()
     camera.target = Vector2(player.x, player.y) 
@@ -639,8 +643,23 @@ def main():
             
             case GAME_STATE.MONTAGE:
                 pass
+            
+            case GAME_STATE.LOST:
+                pass
             case GAME_STATE.PLAYING:
                 player.update(delta_time, game_level)
+                
+                time_left_before_decrement -= delta_time
+                
+                if time_left_before_decrement <= 0:
+                    if game_level == LEVEL_1:
+                        time_left_in_level -= LEVEL_DURATION_DECREMENT
+                    else:
+                        time_left_in_level -= LEVEL_DURATION_DECREMENT + player.freshmen_fifteen_meter
+                    time_left_before_decrement = DURATION_BEFORE_DECREMENT
+                if time_left_in_level <= 0:
+                    game_state = GAME_STATE.LOST
+                
                 if IsMouseButtonPressed(MOUSE_BUTTON_LEFT):
                     mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera)
                     player.x = mouse_world_pos.x
@@ -688,6 +707,9 @@ def main():
             case GAME_STATE.OFFICIAL_ENROLLMENT:
                 draw_texture_pro(official_enrollment_texture, Rectangle(0,0,official_enrollment_texture.width, official_enrollment_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+            case GAME_STATE.LOST:
+                draw_text("YOU_LOST", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 10, RED)
+            
             case GAME_STATE.PLAYING:
                 # Start the 2D camera mode
                 BeginMode2D(camera)
@@ -724,7 +746,9 @@ def main():
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 if player.coffee_count >= 2:
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
-
+                
+                draw_text("TIME_LEFT: " + str(time_left_in_level), SCREEN_WIDTH -160, 60, 15, RED)
+                draw_text("TIME_LEFT before decrement: " + str(time_left_before_decrement), SCREEN_WIDTH -350, 90, 15, RED)
         EndDrawing()
 
     # --- De-Initialization ---

@@ -355,4 +355,13 @@ Next to do:
 Create Level Two
 
 
+Date: 2026/05/1 2:09 AM
+Implemented timer condition for end state
+Implementation:
+store a timer variable that decrements by a fixed amount after a certain amount of time is passed and this decrement, assuming it is not level_one, is increased by the freshmen 15 meter which is a field in the player class
+Technical plan / credit:
+intuited it, not that complicated, similar to jumpTimeTimer from earlier
+Commit message (feature): level timer implementation with lose state timer <= 0
+Next to do:
+make this timer look pretty and the you lost screen and resetting a level
 
