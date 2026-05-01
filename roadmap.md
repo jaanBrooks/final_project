@@ -305,3 +305,24 @@ same thing i did in mid semester project for the dash indicator
 Commit message (feature): coffee boost meter
 Next to do:
 coffee collection HUD
+
+Date: 2026/04/30 7:59 PM
+implement coffee collection HUD
+Implementation:
+used textures from coffe, and made it drawn outside camer
+Technical plan credit:
+intuitive but used google color picker
+Commit message (feature): coffee collection HUD
+Next to do:
+pick textures for level one
+
+Date: 2026/04/30 8:35 PM
+Implemented background
+Implementation:
+used ai to generate an image of an image i found online and then made the image drawn with draw texture pro to fit entire level width and height
+Technical plan credit:
+chatgpt google search of colgate images
+Commit message (feature): background implemented
+Next to do:
+pick textures for tiles
+

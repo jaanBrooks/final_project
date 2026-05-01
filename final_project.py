@@ -516,7 +516,6 @@ class Player:
         draw_text(str(self.sprint_timer),int(self.x),250,11, BLACK)
         draw_text(str("is wall sliding: " + str(self.is_wall_sliding)),int(self.x),270,11, BLACK)
         draw_text(str("is grounded: " + str(self.is_grounded)),int(self.x),290,11, BLACK)
-        
 class Enemy:
     def __init__(self, x, y):
         # Position (top-left for collision)
@@ -706,7 +705,16 @@ def main():
     
     #textures
     coffee_texture = load_texture(join('Items','coffee.png'))
+    coffee_outline_texture = load_texture(join('Items','coffee_outline.png'))
+    bg_texture = load_texture('backgroundFP.png')
 
+    #background shapes
+    coffee_count_rect = Rectangle(SCREEN_WIDTH - 55, SCREEN_HEIGHT - 30, 50, 10)
+    coffee_count_rect_color_one = Color(245, 138, 56, 100) 
+    coffee_hud_bg_rect = Rectangle(SCREEN_WIDTH - 50, SCREEN_HEIGHT - 100, 40, 68)
+    coffee_hud_bg_rect_color = Color(61, 13, 13, 120)
+    background_rect = Rectangle(0,0, TILE_SIZE * TILE_COLS, TILE_SIZE * TILE_ROWS)
+    
     # --- Game Loop ---
     while not WindowShouldClose():
         
@@ -761,6 +769,9 @@ def main():
         # Start the 2D camera mode
         BeginMode2D(camera)
         
+        #draw background before level
+        draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
+        
         # 1. Draw the Level
         draw_level(game_level)
 
@@ -784,8 +795,18 @@ def main():
         
         debug_text = f"Grounded: {player.is_grounded} | Enemies: {len(enemies)}".encode('utf-8')
         DrawText(debug_text, 10, 10, 20, BLACK) 
-
-
+        
+        draw_rectangle_rounded_lines_ex(coffee_count_rect, 2.0, 10,1.0,WHITE)
+        draw_rectangle_rounded(coffee_count_rect, 2.0, 10,coffee_count_rect_color_one)
+        draw_text("COFFEE",SCREEN_WIDTH - 50, SCREEN_HEIGHT - 30, 9, YELLOW)
+        draw_texture_pro(coffee_outline_texture, Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
+        draw_texture_pro(coffee_outline_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
+        draw_text("Coffee Count:" + str(player.coffee_count), 0, 40, 10, WHITE)
+        draw_rectangle_rounded(coffee_hud_bg_rect, 1.0, 5, coffee_hud_bg_rect_color)
+        if player.coffee_count >= 1:
+            draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
+        if player.coffee_count >= 2:
+            draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
         EndDrawing()
 
     # --- De-Initialization ---
