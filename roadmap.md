@@ -333,3 +333,16 @@ just asked ai for textures, and then adjusted colors in preview
 Commit message (feature): textures implemented for tiles
 Next to do:
 implement intro screen and game state management
+
+Date: 2026/04/30 10:41 PM
+Implemented Game state management and title screen
+Implementation:
+utilized match case for game state update and draw
+Technical plan / credit:
+Same thing i did for project 1
+Commit message (feature): title screen and better game state management with match case
+Next to do:
+implement intro dialogue
+
+
+

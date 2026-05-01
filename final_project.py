@@ -637,6 +637,7 @@ def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text):
                 x = col * TILE_SIZE
                 y = row * TILE_SIZE
                 draw_texture_pro(tile_wall_text, Rectangle(0,0, tile_wall_text.width, tile_wall_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE), Vector2(0,0), 0.0, WHITE)
+
 def draw_coffees(coffees, coffee_texture,is_hitbox_mode):
     for cx, cy in coffees:
         draw_texture_pro(coffee_texture, Rectangle(0, 0, 64, 64), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
@@ -700,7 +701,7 @@ def main():
     player = Player(TILE_SIZE * 2, TILE_SIZE * 12)
     player.startup() # Load player textures/animations
     score = 0
-    game_state = "PLAYING" 
+    game_state = GAME_STATE.TITLE
     
     # --- Camera Initialization ---
     camera = Camera2D()
@@ -714,6 +715,7 @@ def main():
     coffee_texture = load_texture(join('Items','coffee.png'))
     coffee_outline_texture = load_texture(join('Items','coffee_outline.png'))
     bg_texture = load_texture('backgroundFP.png')
+    title_texture = load_texture('title_screen.png')
     
     tile_floor_text = load_texture('tile_floor.png')
     tile_half_text = load_texture('tile_half.png')
@@ -733,91 +735,100 @@ def main():
         if IsKeyPressed(KEY_H):
             is_hitbox_mode = not is_hitbox_mode
         # --- Update ---
-        if game_state == "PLAYING":
-            player.update(delta_time, game_level)
-            if player.y > WORLD_HEIGHT:
-                player.reset()
-            # Update Enemies
-            for enemy in enemies:
-                enemy.update(delta_time, game_level)
+        match game_state:
+            case GAME_STATE.TITLE:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.PLAYING
+            case GAME_STATE.PLAYING:
+                player.update(delta_time, game_level)
+                if player.y > WORLD_HEIGHT:
+                    player.reset()
+                # Update Enemies
+                for enemy in enemies:
+                    enemy.update(delta_time, game_level)
 
-            update_camera(camera, player, WORLD_WIDTH, WORLD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
+                update_camera(camera, player, WORLD_WIDTH, WORLD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-            # Check for coin collection
-            collected_indices = player.check_collection(coins)
-            if collected_indices:
-                for index in sorted(collected_indices, reverse=True):
-                    coins.pop(index)
-                    score += 10
+                # Check for coin collection
+                collected_indices = player.check_collection(coins)
+                if collected_indices:
+                    for index in sorted(collected_indices, reverse=True):
+                        coins.pop(index)
+                        score += 10
 
-            # Check for coffee collection
-            if player.coffee_count < COFFEE_MAX:
-                collected_coffee_indices = player.check_collection(coffees)
-                if collected_coffee_indices:
-                    for index in sorted(collected_coffee_indices, reverse=True):
-                        coffees.pop(index)
-                        player.coffee_count += 1
+                # Check for coffee collection
+                if player.coffee_count < COFFEE_MAX:
+                    collected_coffee_indices = player.check_collection(coffees)
+                    if collected_coffee_indices:
+                        for index in sorted(collected_coffee_indices, reverse=True):
+                            coffees.pop(index)
+                            player.coffee_count += 1
 
-            # Check for enemy collision (Stomp/Death/Reset)
-            hit_type, enemy_index = player.check_enemy_collision(enemies)
+                # Check for enemy collision (Stomp/Death/Reset)
+                hit_type, enemy_index = player.check_enemy_collision(enemies)
 
-            if hit_type == "STOMP":
-                # Stomp mechanic: Remove enemy, score, and bounce
-                enemies.pop(enemy_index)
-                score += 100 
-                player.vy = STOMP_BOUNCE # Player bounces up
-                
-            elif hit_type == "LETHAL":
-                # Death/Reset mechanic: Penalty and restart
-                player.reset()
-                score -= 50 
-                if score < 0: score = 0
+                if hit_type == "STOMP":
+                    # Stomp mechanic: Remove enemy, score, and bounce
+                    enemies.pop(enemy_index)
+                    score += 100 
+                    player.vy = STOMP_BOUNCE # Player bounces up
+                    
+                elif hit_type == "LETHAL":
+                    # Death/Reset mechanic: Penalty and restart
+                    player.reset()
+                    score -= 50 
+                    if score < 0: score = 0
             
         # --- Draw ---
         BeginDrawing()
-        ClearBackground(SKYBLUE) 
-        
-        # Start the 2D camera mode
-        BeginMode2D(camera)
-        
-        #draw background before level
-        draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
-        
-        # 1. Draw the Level
-        draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text)
+        ClearBackground(SKYBLUE)
+        match game_state:
+            case GAME_STATE.TITLE:
+                draw_texture_pro(title_texture, Rectangle(0,0,title_texture.width, title_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("PRESS S to START", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 5, 30, WHITE)
+            case GAME_STATE.PLAYING:
+                # Start the 2D camera mode
+                BeginMode2D(camera)
+                
+                #draw background before level
+                draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
+                
+                # 1. Draw the Level
+                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text)
 
-        # 2. Draw Collectibles
-        draw_coins(coins)
-        draw_coffees(coffees, coffee_texture,is_hitbox_mode)
-            
-        # 3. Draw Enemies
-        for enemy in enemies:
-            enemy.draw()
+                # 2. Draw Collectibles
+                draw_coins(coins)
+                draw_coffees(coffees, coffee_texture,is_hitbox_mode)
+                    
+                # 3. Draw Enemies
+                for enemy in enemies:
+                    enemy.draw()
 
-        # 4. Draw Player 
-        player.draw(is_hitbox_mode)
-        
-        # End the 2D camera mode
-        EndMode2D()
-        
-        # 5. Draw HUD (Drawn on screen, outside of BeginMode2D)
-        score_text = f"Score: {score}".encode('utf-8')
-        DrawText(score_text, SCREEN_WIDTH - MeasureText(score_text, 20) - 10, 10, 20, BLACK)
-        
-        debug_text = f"Grounded: {player.is_grounded} | Enemies: {len(enemies)}".encode('utf-8')
-        DrawText(debug_text, 10, 10, 20, BLACK) 
-        
-        draw_rectangle_rounded_lines_ex(coffee_count_rect, 2.0, 10,1.0,WHITE)
-        draw_rectangle_rounded(coffee_count_rect, 2.0, 10,coffee_count_rect_color_one)
-        draw_text("COFFEE",SCREEN_WIDTH - 50, SCREEN_HEIGHT - 30, 9, YELLOW)
-        draw_texture_pro(coffee_outline_texture, Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
-        draw_texture_pro(coffee_outline_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
-        draw_text("Coffee Count:" + str(player.coffee_count), 0, 40, 10, WHITE)
-        draw_rectangle_rounded(coffee_hud_bg_rect, 1.0, 5, coffee_hud_bg_rect_color)
-        if player.coffee_count >= 1:
-            draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
-        if player.coffee_count >= 2:
-            draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
+                # 4. Draw Player 
+                player.draw(is_hitbox_mode)
+                
+                # End the 2D camera mode
+                EndMode2D()
+                
+                # 5. Draw HUD (Drawn on screen, outside of BeginMode2D)
+                score_text = f"Score: {score}".encode('utf-8')
+                DrawText(score_text, SCREEN_WIDTH - MeasureText(score_text, 20) - 10, 10, 20, BLACK)
+                
+                debug_text = f"Grounded: {player.is_grounded} | Enemies: {len(enemies)}".encode('utf-8')
+                DrawText(debug_text, 10, 10, 20, BLACK) 
+                
+                draw_rectangle_rounded_lines_ex(coffee_count_rect, 2.0, 10,1.0,WHITE)
+                draw_rectangle_rounded(coffee_count_rect, 2.0, 10,coffee_count_rect_color_one)
+                draw_text("COFFEE",SCREEN_WIDTH - 50, SCREEN_HEIGHT - 30, 9, YELLOW)
+                draw_texture_pro(coffee_outline_texture, Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
+                draw_texture_pro(coffee_outline_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
+                draw_text("Coffee Count:" + str(player.coffee_count), 0, 40, 10, WHITE)
+                draw_rectangle_rounded(coffee_hud_bg_rect, 1.0, 5, coffee_hud_bg_rect_color)
+                if player.coffee_count >= 1:
+                    draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
+                if player.coffee_count >= 2:
+                    draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
+
         EndDrawing()
 
     # --- De-Initialization ---
