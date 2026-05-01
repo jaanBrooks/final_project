@@ -326,3 +326,10 @@ Commit message (feature): background implemented
 Next to do:
 pick textures for tiles
 
+Date: 2026/04/30 9:52 PM
+Implemented textures for tiles
+Implementation:
+just asked ai for textures, and then adjusted colors in preview
+Commit message (feature): textures implemented for tiles
+Next to do:
+implement intro screen and game state management

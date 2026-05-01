@@ -22,26 +22,26 @@ TILE_COFFEE = 5
 """
 
 # --- Expanded Level Tilemap Definition (50x16 tiles = 2000px wide) ---
-LEVEL = [
+LEVEL_1 = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1],
-    [5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 4, 4, 4, 4, 4, 1, 1, 1, 1, 6, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 4],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 6],
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0],
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0],
     [1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
 ]
-TILE_ROWS = len(LEVEL)
-TILE_COLS = len(LEVEL[0])
+TILE_ROWS = len(LEVEL_1)
+TILE_COLS = len(LEVEL_1[0])
 
 # --- World Dimensions ---
 WORLD_WIDTH = TILE_COLS * TILE_SIZE
@@ -390,8 +390,8 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_STATE.SOLID or (level[row][col] == TILE_STATE.SOLID_TOP_HALF):
-                    if level[row][col] == TILE_STATE.SOLID_TOP_HALF:
+                if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL):
+                    if level[row][col] == TILE_STATE.TILE_HALF:
                         tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
                     else:
                         tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
@@ -418,11 +418,13 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_STATE.SOLID or (level[row][col] == TILE_STATE.SOLID_TOP_HALF):
+                if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL):
                     match level[row][col]:
-                        case TILE_STATE.SOLID:
+                        case TILE_STATE.FLOOR:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                        case TILE_STATE.SOLID_TOP_HALF:
+                        case TILE_STATE.TILE_WALL:
+                            tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                        case TILE_STATE.TILE_HALF:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
                     if CheckCollisionRecs(player_rect, tile_rect):
                         if axis == 'X':
@@ -566,9 +568,9 @@ class Enemy:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_STATE.SOLID:
+                if level[row][col] == TILE_STATE.FLOOR or level[row][col] == TILE_STATE.TILE_WALL:
                     tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                elif level[row][col] == TILE_STATE.SOLID_TOP_HALF:
+                elif level[row][col] == TILE_STATE.TILE_HALF:
                     tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE / 2)    
                     if CheckCollisionRecs(enemy_rect, tile_rect):
                         
@@ -611,25 +613,30 @@ class Enemy:
 
 # --- Drawing and Camera Functions (Unchanged) ---
                 
-def draw_level(level):
+def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text):
     """Draws the solid tiles of the level map."""
     for row in range(TILE_ROWS):
         for col in range(TILE_COLS):
             tile_value = level[row][col]
-            if tile_value == TILE_STATE.SOLID:
+            if tile_value == TILE_STATE.FLOOR:
                 x = col * TILE_SIZE
                 y = row * TILE_SIZE
                 
-                DrawRectangle(x, y, TILE_SIZE, TILE_SIZE, DARKGRAY)
-                DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE, BLACK)
-            
-            if tile_value == TILE_STATE.SOLID_TOP_HALF:
+                """ DrawRectangle(x, y, TILE_SIZE, TILE_SIZE, DARKGRAY)
+                DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE, BLACK) """
+                draw_texture_pro(tile_floor_text, Rectangle(0,0, tile_floor_text.width, tile_floor_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE), Vector2(0,0), 0.0, WHITE)
+                
+            if tile_value == TILE_STATE.TILE_HALF:
                 x = col * TILE_SIZE
                 y = row * TILE_SIZE
-                
-                DrawRectangle(x, y, TILE_SIZE, TILE_SIZE // 2, DARKGRAY)
-                DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE // 2, BLACK)
+                draw_texture_pro(tile_half_text, Rectangle(0,0, tile_half_text.width, tile_half_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE //2), Vector2(0,0), 0.0, WHITE)
+                """ DrawRectangle(x, y, TILE_SIZE, TILE_SIZE // 2, DARKGRAY)
+                DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE // 2, BLACK) """
 
+            if tile_value == TILE_STATE.TILE_WALL:
+                x = col * TILE_SIZE
+                y = row * TILE_SIZE
+                draw_texture_pro(tile_wall_text, Rectangle(0,0, tile_wall_text.width, tile_wall_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE), Vector2(0,0), 0.0, WHITE)
 def draw_coffees(coffees, coffee_texture,is_hitbox_mode):
     for cx, cy in coffees:
         draw_texture_pro(coffee_texture, Rectangle(0, 0, 64, 64), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
@@ -686,7 +693,7 @@ def main():
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
-    game_level, coins, enemies, coffees = parse_level(LEVEL)
+    game_level, coins, enemies, coffees = parse_level(LEVEL_1)
     
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
@@ -707,6 +714,10 @@ def main():
     coffee_texture = load_texture(join('Items','coffee.png'))
     coffee_outline_texture = load_texture(join('Items','coffee_outline.png'))
     bg_texture = load_texture('backgroundFP.png')
+    
+    tile_floor_text = load_texture('tile_floor.png')
+    tile_half_text = load_texture('tile_half.png')
+    tile_wall_text = load_texture("tile_wall.png")
 
     #background shapes
     coffee_count_rect = Rectangle(SCREEN_WIDTH - 55, SCREEN_HEIGHT - 30, 50, 10)
@@ -773,7 +784,7 @@ def main():
         draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
         
         # 1. Draw the Level
-        draw_level(game_level)
+        draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text)
 
         # 2. Draw Collectibles
         draw_coins(coins)
