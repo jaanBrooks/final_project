@@ -344,5 +344,15 @@ Commit message (feature): title screen and better game state management with mat
 Next to do:
 implement intro dialogue
 
+Date: 2026/05/1 1:58 AM
+Implemented end condition for level One with montage to next stage
+Implementation:
+Created a new tile that sets a flag upon collision to change game state
+Technical plan / credit:
+animations and textures from chatgpt more in resources or wherever i put the ai stuff
+Commit message (feature): completed level one
+Next to do:
+Create Level Two
+
 
 

@@ -25,7 +25,7 @@ TILE_COFFEE = 5
 LEVEL_1 = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -70,11 +70,6 @@ def parse_level(level):
                 coins.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
                 new_level[r][c] = TILE_STATE.AIR 
             
-            elif new_level[r][c] == TILE_STATE.ENEMY:
-                # Enemy position is top-left
-                enemies.append(Enemy(x, y))
-                new_level[r][c] = TILE_STATE.AIR 
-            
             elif new_level[r][c] == TILE_STATE.COFFEE:
                 coffees.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
                 new_level[r][c] = TILE_STATE.AIR
@@ -95,7 +90,6 @@ class Player:
         self.y = y
         self.width = PLAYER_WIDTH
         self.height = PLAYER_HEIGHT
-        self.collision_rec = (self.x, self.y, self.width, self.height)
         
         # Physics
         self.vx = 0.0
@@ -120,6 +114,7 @@ class Player:
         self.particles = None
         
         self.collided_with_x = False
+        self.reach_level_end = False
         
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
@@ -418,15 +413,20 @@ class Player:
                 if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
                     continue
                 
-                if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL):
+                if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL) or (level[row][col] == TILE_STATE.TILE_LEVEL_END) :
                     match level[row][col]:
                         case TILE_STATE.FLOOR:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                         case TILE_STATE.TILE_WALL:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                        case TILE_STATE.TILE_LEVEL_END:
+                            tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                         case TILE_STATE.TILE_HALF:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE // 2)
                     if CheckCollisionRecs(player_rect, tile_rect):
+                        if (level[row][col] == TILE_STATE.TILE_LEVEL_END):
+                            self.reach_level_end = True
+                            break
                         if axis == 'X':
                             
                             if self.vx > 0: # Moving Right
@@ -444,9 +444,6 @@ class Player:
                                 self.y = tile_rect[1] + TILE_SIZE
                                 
                             self.vy = 0.0 
-                            
-                        player_rect = self.get_rect()
-                        px, py, pw, ph = player_rect
                 
                         
     def check_collection(self, collectibles):
@@ -466,32 +463,6 @@ class Player:
                 
         return collected_indices
     
-    def check_enemy_collision(self, enemies):
-        """Checks for collision with enemies and determines outcome (stomp or death).
-        Returns (hit_type, enemy_index) or (None, -1).
-        hit_type: "STOMP" (safe kill) or "LETHAL" (death)
-        """
-        player_rect = self.get_rect()
-        px, py, pw, ph = player_rect
-        
-        for i, enemy in enumerate(enemies):
-            enemy_rect = enemy.get_rect()
-            
-            if CheckCollisionRecs(player_rect, enemy_rect):
-                
-                # STOMP Condition: 
-                # 1. Player is falling (vy > 0) 
-                # 2. Player's bottom is above the enemy's mid-point (approximate stomping zone)
-                is_stompable_zone = py + ph < enemy.y + enemy.height * 0.5 
-                
-                if self.vy > 0 and is_stompable_zone:
-                    return "STOMP", i
-                else:
-                    # Lethal collision (side, head, or missing the stomp zone)
-                    return "LETHAL", i
-                    
-        return None, -1
-    
     def reset(self):
         """Resets the player to their starting position."""
         self.x = self.start_x
@@ -503,7 +474,7 @@ class Player:
     def draw(self, is_hitbox_visible):
         """Draws the player at their world coordinates."""
         #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
-        draw_texture_pro(self.texture, self.frame, Rectangle(self.x - PLAYER_TILE_WIDTH / 3, self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
+        draw_texture_pro(self.texture, self.frame, Rectangle(self.x - ((PLAYER_TILE_WIDTH / 3) + 5), self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
         if self.is_sprinting:
             DrawRectangleLines(int(self.x), int(self.y)+ int(self.height) + 3,40, 3, BROWN)
             DrawRectangleGradientV(int(self.x), int(self.y)+ int(self.height) + 3,int(40 * self.sprint_timer / COFFEE_SPRINT_DURATION), 3, ORANGE, WHITE)
@@ -518,126 +489,37 @@ class Player:
         draw_text(str(self.sprint_timer),int(self.x),250,11, BLACK)
         draw_text(str("is wall sliding: " + str(self.is_wall_sliding)),int(self.x),270,11, BLACK)
         draw_text(str("is grounded: " + str(self.is_grounded)),int(self.x),290,11, BLACK)
-class Enemy:
-    def __init__(self, x, y):
-        # Position (top-left for collision)
-        self.x = x
-        self.y = y
-        self.width = TILE_SIZE * 0.7
-        self.height = TILE_SIZE * 0.7
-        
-        # Physics/Movement
-        self.vx = ENEMY_SPEED # Start moving right
-        self.vy = 0.0 
-        self.is_grounded = False
-
-    def get_rect(self):
-        """Returns the enemy's collision bounding box."""
-        return (self.x, self.y, self.width, self.height)
-
-    def update(self, delta_time, level):
-        # 1. Apply Gravity
-        if self.is_grounded:
-            self.vy = 0.0
-        self.vy += GRAVITY * delta_time
-        self.is_grounded = False 
-
-        # 2. Apply Movement 
-
-        # Apply X movement
-        self.x += self.vx * delta_time
-        self.handle_tile_collision(level, 'X')
-        
-        # Apply Y movement
-        self.y += self.vy * delta_time
-        self.handle_tile_collision(level, 'Y')
-
-    def handle_tile_collision(self, level, axis):
-        """Enemy collision: reverses direction on horizontal wall contact, respects vertical floor contact."""
-        enemy_rect = self.get_rect()
-        px, py, pw, ph = enemy_rect
-        
-        min_col = int(px / TILE_SIZE)
-        max_col = int((px + pw) / TILE_SIZE)
-        min_row = int(py / TILE_SIZE)
-        max_row = int((py + ph) / TILE_SIZE)
-
-        for row in range(min_row, max_row + 1):
-            for col in range(min_col, max_col + 1):
-                
-                if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
-                    continue
-                
-                if level[row][col] == TILE_STATE.FLOOR or level[row][col] == TILE_STATE.TILE_WALL:
-                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                elif level[row][col] == TILE_STATE.TILE_HALF:
-                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE / 2)    
-                    if CheckCollisionRecs(enemy_rect, tile_rect):
-                        
-                        if axis == 'X':
-                            # Reverses direction on horizontal collision
-                            if self.vx > 0:
-                                self.x = tile_rect[0] - self.width
-                            elif self.vx < 0:
-                                self.x = tile_rect[0] + TILE_SIZE
-                            self.vx *= -1 # Reverse direction
-                            
-                        elif axis == 'Y':
-                            if self.vy >= 0: # Hitting Ground
-                                self.y = tile_rect[1] - self.height
-                                self.is_grounded = True 
-                                
-                            self.vy = 0.0 
-                            
-                        enemy_rect = self.get_rect() # Update rect after resolution
-
-    def draw(self):
-        """Draws the enemy as a red rectangle with a directional indicator."""
-        DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), RED)
-        DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), BLACK)
-        
-        # Draw a small indicator for direction
-        center_x = self.x + self.width / 2
-        center_y = self.y + self.height / 2
-        indicator_size = self.width * 0.2
-        
-        if self.vx > 0: # Moving Right
-            DrawTriangle(Vector2(center_x + indicator_size, center_y), 
-                         Vector2(center_x - indicator_size, center_y - indicator_size), 
-                         Vector2(center_x - indicator_size, center_y + indicator_size), WHITE)
-        elif self.vx < 0: # Moving Left
-            DrawTriangle(Vector2(center_x - indicator_size, center_y), 
-                         Vector2(center_x + indicator_size, center_y - indicator_size), 
-                         Vector2(center_x + indicator_size, center_y + indicator_size), WHITE)
 
 
 # --- Drawing and Camera Functions (Unchanged) ---
                 
-def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text):
+def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end_texture, is_hitbox):
     """Draws the solid tiles of the level map."""
     for row in range(TILE_ROWS):
         for col in range(TILE_COLS):
             tile_value = level[row][col]
+            x = col * TILE_SIZE
+            y = row * TILE_SIZE
             if tile_value == TILE_STATE.FLOOR:
-                x = col * TILE_SIZE
-                y = row * TILE_SIZE
+                
                 
                 """ DrawRectangle(x, y, TILE_SIZE, TILE_SIZE, DARKGRAY)
                 DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE, BLACK) """
                 draw_texture_pro(tile_floor_text, Rectangle(0,0, tile_floor_text.width, tile_floor_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE), Vector2(0,0), 0.0, WHITE)
                 
             if tile_value == TILE_STATE.TILE_HALF:
-                x = col * TILE_SIZE
-                y = row * TILE_SIZE
                 draw_texture_pro(tile_half_text, Rectangle(0,0, tile_half_text.width, tile_half_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE //2), Vector2(0,0), 0.0, WHITE)
                 """ DrawRectangle(x, y, TILE_SIZE, TILE_SIZE // 2, DARKGRAY)
                 DrawRectangleLines(x, y, TILE_SIZE, TILE_SIZE // 2, BLACK) """
 
             if tile_value == TILE_STATE.TILE_WALL:
-                x = col * TILE_SIZE
-                y = row * TILE_SIZE
                 draw_texture_pro(tile_wall_text, Rectangle(0,0, tile_wall_text.width, tile_wall_text.height), Rectangle(x, y, TILE_SIZE,TILE_SIZE), Vector2(0,0), 0.0, WHITE)
-
+            
+            if tile_value == TILE_STATE.TILE_LEVEL_END:
+                draw_texture_pro(level_end_texture, Rectangle(0,0,level_end_texture.width, level_end_texture.height), Rectangle(x - TILE_SIZE, y - (2 * TILE_SIZE) + 20, TILE_SIZE*3,TILE_SIZE*3), Vector2(0,0), 0.0, WHITE)
+                draw_ellipse(x + 20,y + 37,20,5,Color(42, 250, 87, 205))
+                if is_hitbox:
+                    draw_rectangle_lines(x,y,TILE_SIZE,TILE_SIZE, GREEN)
 def draw_coffees(coffees, coffee_texture,is_hitbox_mode):
     for cx, cy in coffees:
         draw_texture_pro(coffee_texture, Rectangle(0, 0, 64, 64), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
@@ -702,6 +584,7 @@ def main():
     player.startup() # Load player textures/animations
     score = 0
     game_state = GAME_STATE.TITLE
+    next_state = GAME_STATE.OFFICIAL_ENROLLMENT
     
     # --- Camera Initialization ---
     camera = Camera2D()
@@ -716,6 +599,11 @@ def main():
     coffee_outline_texture = load_texture(join('Items','coffee_outline.png'))
     bg_texture = load_texture('backgroundFP.png')
     title_texture = load_texture('title_screen.png')
+    acceptance_texture = load_texture('acceptance.png')
+    level_one_end_texture = load_texture('level_1_end.png')
+    official_enrollment_texture = load_texture('official_enrollment.png')
+    montage_texture = load_texture('montage.png')
+    level_end_texture = level_one_end_texture
     
     tile_floor_text = load_texture('tile_floor.png')
     tile_half_text = load_texture('tile_half.png')
@@ -736,16 +624,29 @@ def main():
             is_hitbox_mode = not is_hitbox_mode
         # --- Update ---
         match game_state:
+            
             case GAME_STATE.TITLE:
                 if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.INTRO_EMAIL
+            
+            case GAME_STATE.INTRO_EMAIL:
+                if IsKeyPressed(KEY_S):
                     game_state = GAME_STATE.PLAYING
+            
+            case GAME_STATE.OFFICIAL_ENROLLMENT:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.MONTAGE
+            
+            case GAME_STATE.MONTAGE:
+                pass
             case GAME_STATE.PLAYING:
                 player.update(delta_time, game_level)
+                if IsMouseButtonPressed(MOUSE_BUTTON_LEFT):
+                    mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera)
+                    player.x = mouse_world_pos.x
+                    player.y = mouse_world_pos.y
                 if player.y > WORLD_HEIGHT:
                     player.reset()
-                # Update Enemies
-                for enemy in enemies:
-                    enemy.update(delta_time, game_level)
 
                 update_camera(camera, player, WORLD_WIDTH, WORLD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -763,21 +664,12 @@ def main():
                         for index in sorted(collected_coffee_indices, reverse=True):
                             coffees.pop(index)
                             player.coffee_count += 1
+                            
+                if player.reach_level_end:
+                    game_state = next_state
 
-                # Check for enemy collision (Stomp/Death/Reset)
-                hit_type, enemy_index = player.check_enemy_collision(enemies)
-
-                if hit_type == "STOMP":
-                    # Stomp mechanic: Remove enemy, score, and bounce
-                    enemies.pop(enemy_index)
-                    score += 100 
-                    player.vy = STOMP_BOUNCE # Player bounces up
                     
-                elif hit_type == "LETHAL":
-                    # Death/Reset mechanic: Penalty and restart
-                    player.reset()
-                    score -= 50 
-                    if score < 0: score = 0
+
             
         # --- Draw ---
         BeginDrawing()
@@ -786,6 +678,16 @@ def main():
             case GAME_STATE.TITLE:
                 draw_texture_pro(title_texture, Rectangle(0,0,title_texture.width, title_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to START", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 5, 30, WHITE)
+            case GAME_STATE.INTRO_EMAIL:
+                draw_texture_pro(acceptance_texture, Rectangle(0,0,acceptance_texture.width, acceptance_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+            case GAME_STATE.MONTAGE:
+                draw_texture_pro(montage_texture, Rectangle(0,0,montage_texture.width, montage_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+                draw_text("THE FOLLOWING WEEKS. . .", 20, 40, 30, WHITE)
+            case GAME_STATE.OFFICIAL_ENROLLMENT:
+                draw_texture_pro(official_enrollment_texture, Rectangle(0,0,official_enrollment_texture.width, official_enrollment_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
             case GAME_STATE.PLAYING:
                 # Start the 2D camera mode
                 BeginMode2D(camera)
@@ -794,15 +696,11 @@ def main():
                 draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
                 
                 # 1. Draw the Level
-                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text)
+                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text, level_end_texture,is_hitbox_mode)
 
                 # 2. Draw Collectibles
-                draw_coins(coins)
                 draw_coffees(coffees, coffee_texture,is_hitbox_mode)
                     
-                # 3. Draw Enemies
-                for enemy in enemies:
-                    enemy.draw()
 
                 # 4. Draw Player 
                 player.draw(is_hitbox_mode)
@@ -811,8 +709,6 @@ def main():
                 EndMode2D()
                 
                 # 5. Draw HUD (Drawn on screen, outside of BeginMode2D)
-                score_text = f"Score: {score}".encode('utf-8')
-                DrawText(score_text, SCREEN_WIDTH - MeasureText(score_text, 20) - 10, 10, 20, BLACK)
                 
                 debug_text = f"Grounded: {player.is_grounded} | Enemies: {len(enemies)}".encode('utf-8')
                 DrawText(debug_text, 10, 10, 20, BLACK) 
