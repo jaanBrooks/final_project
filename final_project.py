@@ -8,6 +8,7 @@ from particle import *
 from settings import *
 from game_enums import *
 from os.path import join
+from levels import *
 
 # --- Game Constants ---
 
@@ -21,35 +22,9 @@ TILE_SOLID_TOP_HALF = 4
 TILE_COFFEE = 5
 """
 
-# --- Expanded Level Tilemap Definition (50x16 tiles = 2000px wide) ---
-LEVEL_1 = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 4, 4, 4, 4, 4, 1, 1, 1, 1, 6, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 6],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 6],
-    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0],
-    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-]
-TILE_ROWS = len(LEVEL_1)
-TILE_COLS = len(LEVEL_1[0])
-
-# --- World Dimensions ---
-WORLD_WIDTH = TILE_COLS * TILE_SIZE
-WORLD_HEIGHT = TILE_ROWS * TILE_SIZE
-
 # --- Utility Functions ---
 
-def parse_level(level):
+def parse_level(level, tile_rows, tile_cols):
     """
     Parses the level map, extracts all dynamic entities (coins, enemies), 
     replaces their spawn points with air, and returns the modified collision map and entity lists.
@@ -60,8 +35,8 @@ def parse_level(level):
     # Create a deep copy of the level to modify the tiles, leaving the original map intact
     new_level = [row[:] for row in level] 
     
-    for r in range(TILE_ROWS):
-        for c in range(TILE_COLS):
+    for r in range(tile_rows):
+        for c in range(tile_cols):
             x = c * TILE_SIZE
             y = r * TILE_SIZE
 
@@ -118,6 +93,11 @@ class Player:
         
         self.freshmen_fifteen_meter_active = False
         self.freshmen_fifteen_meter = 6
+        
+        self.tile_rows = TILE_ROWS_LEVEL_1
+        self.tile_cols = TILE_COLS_LEVEL_1
+        self.world_width = WORLD_WIDTH_LEVEL_1
+        self.world_height = WORLD_HEIGHT_LEVEL_1
         
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
@@ -226,7 +206,7 @@ class Player:
                     self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.SLIDING:
-                will_bang_head = self.check_slide_head_collision(level)
+                will_bang_head = self.check_slide_head_collision(level, self.tile_rows, self.tile_cols )
                 self.handle_speed_boost(delta_time)
                 self.vx = SLIDE_VELOCITY * self.direction.value
                     
@@ -257,7 +237,7 @@ class Player:
                 else:
                     if self.anim.done:
                         self.vx = SLIDE_VELOCITY * self.direction * .2
-                        if not self.check_slide_head_collision(level):
+                        if not self.check_slide_head_collision(level, self.tile_rows, self.tile_cols):
                             self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.JUMPING:
@@ -293,11 +273,11 @@ class Player:
         self.x += self.vx * delta_time
         self.is_wall_sliding = False
         self.collided_with_x = False
-        self.handle_tile_collision(level, 'X')
+        self.handle_tile_collision(level, 'X', self.tile_rows, self.tile_cols)
         
         # Apply Y movement
         self.y += self.vy * delta_time
-        self.handle_tile_collision(level, 'Y')
+        self.handle_tile_collision(level, 'Y', self.tile_rows, self.tile_cols)
         
         
         if self.check_wall_slide():
@@ -306,7 +286,7 @@ class Player:
             self.y -= self.vy * delta_time * 0.7
         
         # --- Safety Clamp to World Bounds ---
-        self.x = max(0, min(self.x, WORLD_WIDTH - self.width))
+        self.x = max(0, min(self.x, self.world_width - self.width))
         
         self.anim.update(delta_time)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
@@ -373,7 +353,7 @@ class Player:
                 self.can_big_jump = False
     
     #easy way to check if the player will collide with a tile with normal hitbox but not with sliding hitbox so we now know whether to keep sliding or not
-    def check_slide_head_collision(self, level):
+    def check_slide_head_collision(self, level, tile_rows, tile_cols):
         player_norm_rect = self.get_rect()
         player_slide_rect = self.get_rect_sliding()
         
@@ -385,7 +365,7 @@ class Player:
         for row in range(min_row, max_row + 1):
             for col in range(min_col, max_col + 1):
                 
-                if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
+                if row < 0 or row >= tile_rows or col < 0 or col >= tile_cols:
                     continue
                 
                 if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL):
@@ -397,7 +377,7 @@ class Player:
                     if CheckCollisionRecs(player_norm_rect, tile_rect) and not CheckCollisionRecs(player_slide_rect, tile_rect):
                         return True
         return False
-    def handle_tile_collision(self, level, axis):
+    def handle_tile_collision(self, level, axis, tile_rows, tile_cols):
         """Performs AABB collision checks against solid tiles and resolves the collision."""
         if self.state == PLAYER_STATE.SLIDING:
             player_rect = self.get_rect_sliding()
@@ -413,7 +393,7 @@ class Player:
         for row in range(min_row, max_row + 1):
             for col in range(min_col, max_col + 1):
                 
-                if row < 0 or row >= TILE_ROWS or col < 0 or col >= TILE_COLS:
+                if row < 0 or row >= tile_rows or col < 0 or col >= tile_cols:
                     continue
                 
                 if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL) or (level[row][col] == TILE_STATE.TILE_LEVEL_END) :
@@ -496,7 +476,7 @@ class Player:
 
 # --- Drawing and Camera Functions (Unchanged) ---
                 
-def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end_texture, is_hitbox):
+def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end_texture, is_hitbox, TILE_ROWS, TILE_COLS):
     """Draws the solid tiles of the level map."""
     for row in range(TILE_ROWS):
         for col in range(TILE_COLS):
@@ -579,8 +559,12 @@ def main():
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
-    game_level, coins, enemies, coffees = parse_level(LEVEL_1)
-    
+    game_level, coins, enemies, coffees = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
+    tile_rows = TILE_ROWS_LEVEL_1
+    tile_cols = TILE_COLS_LEVEL_1
+    world_height = WORLD_HEIGHT_LEVEL_1
+    world_width = WORLD_WIDTH_LEVEL_1
+    level_num = GAME_LEVEL.ONE
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
     player = Player(TILE_SIZE * 2, TILE_SIZE * 12)
@@ -618,7 +602,7 @@ def main():
     coffee_count_rect_color_one = Color(245, 138, 56, 100) 
     coffee_hud_bg_rect = Rectangle(SCREEN_WIDTH - 50, SCREEN_HEIGHT - 100, 40, 68)
     coffee_hud_bg_rect_color = Color(61, 13, 13, 120)
-    background_rect = Rectangle(0,0, TILE_SIZE * TILE_COLS, TILE_SIZE * TILE_ROWS)
+    background_rect = Rectangle(0,0, TILE_SIZE * tile_cols, TILE_SIZE * tile_rows)
     
     # --- Game Loop ---
     while not WindowShouldClose():
@@ -652,7 +636,7 @@ def main():
                 time_left_before_decrement -= delta_time
                 
                 if time_left_before_decrement <= 0:
-                    if game_level == LEVEL_1:
+                    if level_num == GAME_LEVEL.ONE:
                         time_left_in_level -= LEVEL_DURATION_DECREMENT
                     else:
                         time_left_in_level -= LEVEL_DURATION_DECREMENT + player.freshmen_fifteen_meter
@@ -664,10 +648,10 @@ def main():
                     mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera)
                     player.x = mouse_world_pos.x
                     player.y = mouse_world_pos.y
-                if player.y > WORLD_HEIGHT:
+                if player.y > world_height:
                     player.reset()
 
-                update_camera(camera, player, WORLD_WIDTH, WORLD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
+                update_camera(camera, player, world_width, world_height, SCREEN_WIDTH, SCREEN_HEIGHT)
 
                 # Check for coin collection
                 collected_indices = player.check_collection(coins)
@@ -718,7 +702,7 @@ def main():
                 draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
                 
                 # 1. Draw the Level
-                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text, level_end_texture,is_hitbox_mode)
+                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text, level_end_texture,is_hitbox_mode, tile_rows, tile_cols)
 
                 # 2. Draw Collectibles
                 draw_coffees(coffees, coffee_texture,is_hitbox_mode)

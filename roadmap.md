@@ -355,7 +355,7 @@ Next to do:
 Create Level Two
 
 
-Date: 2026/05/1 2:09 AM
+Date: 2026/05/1 2:09 PM
 Implemented timer condition for end state
 Implementation:
 store a timer variable that decrements by a fixed amount after a certain amount of time is passed and this decrement, assuming it is not level_one, is increased by the freshmen 15 meter which is a field in the player class
@@ -364,4 +364,14 @@ intuited it, not that complicated, similar to jumpTimeTimer from earlier
 Commit message (feature): level timer implementation with lose state timer <= 0
 Next to do:
 make this timer look pretty and the you lost screen and resetting a level
+
+Date: 2026/05/1 2:09 PM
+moved level information in levels.py and refactored final_project.py to utilize this new file which stores everything
+Implementation:
+refactoring, kept running and finding errors, going to the line with command click and replacing old constants either with local variables or arguments
+Technical plan / credit:
+refactoring not much technicality
+Commit message (refactor): moved level data into own file for ease of use for levels 2 and 3
+Next to do:
+start making level 2 to implement freshmen 15 display
 
