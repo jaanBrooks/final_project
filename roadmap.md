@@ -395,4 +395,19 @@ Commit message (feature): created level 2 and 3 template
 Next to do:
 start making level 2 to implement freshmen 15 display, and also have guy that makes you wait if you collide with him and makes you talk to him
 
+Date: 2026/05/1 5:53 PM
+Goal
+Implement “yapper” NPC that temporarily locks the player and displays dialogue upon interaction
+Implementation:
+Added TILE_YAPPER to level map and updated parse_level to instantiate Yapper objects at those tile positions while keeping the tile for collision detection.
+Created Yapper class with animation state using anim.py
+in handle_tile_collision added detection for TILE_YAPPER that triggers a yap interaction sets player.yap_timer to YAP_DURATION Removes tile sets to AIR to prevent repeated triggering player update now checks yap_timer while yap_timer > 0 player input is disabled no movement or jumping timer decrements each frame until player regains control by dt player draw renders a dialogue bar and message above the player while yap_timer is active, along with a visual timer bar
+Technical plan/credit:
+built on existing tile parsing system and collision handling reused nimation system from player for NPC animation. General structure mix of tiles and objects like coffee and tile solid or whatever
+
+Commit message: feat(yapper npc interaction and animation): added NPC that locks player movement and displays dialogue on collision
+
+Next/TO DO:
+implement beer and salad collectible
+
 

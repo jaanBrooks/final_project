@@ -32,6 +32,7 @@ def parse_level(level, tile_rows, tile_cols):
     coins = []
     enemies = []
     coffees = []
+    yappers = []
     # Create a deep copy of the level to modify the tiles, leaving the original map intact
     new_level = [row[:] for row in level] 
     
@@ -48,8 +49,11 @@ def parse_level(level, tile_rows, tile_cols):
             elif new_level[r][c] == TILE_STATE.COFFEE:
                 coffees.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
                 new_level[r][c] = TILE_STATE.AIR
+            
+            elif new_level[r][c] == TILE_STATE.TILE_YAPPER:
+                yappers.append(Yapper(x, y))
                 
-    return new_level, coins, enemies, coffees
+    return new_level, coins, enemies, coffees, yappers
 
 
 # --- Game Object Classes ---
@@ -98,6 +102,9 @@ class Player:
         self.tile_cols = TILE_COLS_LEVEL_1
         self.world_width = WORLD_WIDTH_LEVEL_1
         self.world_height = WORLD_HEIGHT_LEVEL_1
+        
+        self.yap_timer = 0
+        self.yap_message = "Blah BLAH blah bLah . . . ."
         
     def startup(self):
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
@@ -173,7 +180,10 @@ class Player:
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
         self.sprint_speed_multiplier = 1.0
-
+        if self.yap_timer >= 0:
+            self.yap_timer -= delta_time
+            if self.yap_timer < 0:
+                self.yap_timer = 0
         if self.wall_jump_lock_timer > 0:
             self.wall_jump_lock_timer -= delta_time
             self.vx = WALL_JUMP_POWER.x * self.direction
@@ -189,19 +199,21 @@ class Player:
             case PLAYER_STATE.IDLE:
                 self.handle_speed_boost(delta_time)
                 
-                if not self.is_wall_jumping:
+                if not self.is_wall_jumping and self.yap_timer == 0:
                     self.handle_left_and_right_input(delta_time)
                 
-                self.handle_jump_input(delta_time)
+                if self.yap_timer == 0:
+                    self.handle_jump_input(delta_time)
             
             case PLAYER_STATE.RUNNING:
                 self.handle_speed_boost(delta_time)
-                self.handle_jump_input(delta_time)
+                if self.yap_timer == 0:
+                    self.handle_jump_input(delta_time)
                 
-                if not self.is_wall_jumping:
+                if not self.is_wall_jumping and self.yap_timer == 0:
                     self.handle_left_and_right_input(delta_time)
                 
-                if IsKeyPressed(KEY_S):
+                if IsKeyPressed(KEY_S) and self.yap_timer == 0:
                     self.transition(PLAYER_STATE.SLIDING)
                 if self.vx == 0:
                     self.transition(PLAYER_STATE.IDLE)
@@ -209,8 +221,7 @@ class Player:
             case PLAYER_STATE.SLIDING:
                 will_bang_head = self.check_slide_head_collision(level, self.tile_rows, self.tile_cols )
                 self.handle_speed_boost(delta_time)
-                self.vx = SLIDE_VELOCITY * self.direction.value
-                    
+                self.vx = SLIDE_VELOCITY * self.direction.value   
                 if self.texture == self.slide_start_texture:
                     
                     if self.anim.done:
@@ -243,9 +254,10 @@ class Player:
             
             case PLAYER_STATE.JUMPING:
                 self.handle_speed_boost(delta_time)
-                self.handle_jump_input(delta_time)
+                if self.yap_timer == 0:
+                    self.handle_jump_input(delta_time)
                 
-                if not self.is_wall_jumping:
+                if not self.is_wall_jumping and self.yap_timer == 0:
                     self.handle_left_and_right_input(delta_time)
                 if self.is_grounded:
                     self.transition(PLAYER_STATE.IDLE)
@@ -399,8 +411,12 @@ class Player:
                 
                 if row < 0 or row >= tile_rows or col < 0 or col >= tile_cols:
                     continue
-                
-                if level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL) or (level[row][col] == TILE_STATE.TILE_LEVEL_END) :
+                if level[row][col] == TILE_STATE.TILE_YAPPER:
+                    tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                    if CheckCollisionRecs(player_rect, tile_rect):
+                        self.yap_timer = YAP_DURATION
+                        level[row][col] = TILE_STATE.AIR
+                elif level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL) or (level[row][col] == TILE_STATE.TILE_LEVEL_END) :
                     match level[row][col]:
                         case TILE_STATE.FLOOR:
                             tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
@@ -464,8 +480,8 @@ class Player:
         #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
         draw_texture_pro(self.texture, self.frame, Rectangle(self.x - ((PLAYER_TILE_WIDTH / 3) + 5), self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
         if self.is_sprinting:
-            DrawRectangleLines(int(self.x), int(self.y)+ int(self.height) + 3,40, 3, BROWN)
-            DrawRectangleGradientV(int(self.x), int(self.y)+ int(self.height) + 3,int(40 * self.sprint_timer / COFFEE_SPRINT_DURATION), 3, ORANGE, WHITE)
+            DrawRectangleLines(int(self.x), int(self.y)+ int(self.height) + 3,40, 6, BROWN)
+            DrawRectangleGradientV(int(self.x), int(self.y)+ int(self.height) + 3,int(40 * self.sprint_timer / COFFEE_SPRINT_DURATION), 6, ORANGE, WHITE)
         if self.particles:
             self.particles.draw()
         if is_hitbox_visible:
@@ -478,10 +494,28 @@ class Player:
         draw_text(str("is wall sliding: " + str(self.is_wall_sliding)),int(self.x),270,11, BLACK)
         draw_text(str("is grounded: " + str(self.is_grounded)),int(self.x),290,11, BLACK)
 
+        if self.yap_timer > 0:
+            draw_text(self.yap_message, int(self.x - (10* self.direction)),int( self.y - 10), 10, BLACK)
+            DrawRectangleLines(int(self.x - 15), int( self.y - 20),140, 9, BLACK)
+            DrawRectangleGradientV(int(self.x - 15), int( self.y - 20),int(100 * self.yap_timer / YAP_DURATION), 9, PURPLE, RED)
+class Yapper:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.anim = Animation(0, 3, 0, 1, .2, .2, AnimationType.REPEATING, 0, 4)
+        self.frame = self.anim.frame(YAPPER_TILE_WIDTH, YAPPER_TILE_HEIGHT)
 
+    def update(self, delta_time):
+        self.anim.update(delta_time)
+        self.frame = self.anim.frame(YAPPER_TILE_WIDTH, YAPPER_TILE_HEIGHT)
+
+    def draw(self, is_hitbox_visible, yap_texture):
+        draw_texture_pro(yap_texture, self.frame, Rectangle(self.x, self.y, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
+        if is_hitbox_visible:
+            DrawRectangleLines(int(self.x), int(self.y), TILE_SIZE, TILE_SIZE, PURPLE)
 # --- Drawing and Camera Functions (Unchanged) ---
                 
-def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end_texture, is_hitbox, TILE_ROWS, TILE_COLS):
+def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end_texture, is_hitbox, TILE_ROWS, TILE_COLS, is_hitbox_mode):
     """Draws the solid tiles of the level map."""
     for row in range(TILE_ROWS):
         for col in range(TILE_COLS):
@@ -564,7 +598,7 @@ def main():
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
-    game_level, coins, enemies, coffees = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
+    game_level, coins, enemies, coffees, yappers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
     tile_rows = TILE_ROWS_LEVEL_1
     tile_cols = TILE_COLS_LEVEL_1
     world_height = WORLD_HEIGHT_LEVEL_1
@@ -601,6 +635,7 @@ def main():
     tile_floor_text = load_texture('tile_floor.png')
     tile_half_text = load_texture('tile_half.png')
     tile_wall_text = load_texture("tile_wall.png")
+    yapper_texture = load_texture("yapper.png")
 
     #background shapes
     coffee_count_rect = Rectangle(SCREEN_WIDTH - 55, SCREEN_HEIGHT - 30, 50, 10)
@@ -645,7 +680,7 @@ def main():
                     tile_rows = TILE_ROWS_LEVEL_2
                     player.tile_rows = tile_rows
                     player.tile_cols = tile_cols
-                    game_level, coins, enemies, coffees = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
+                    game_level, coins, enemies, coffees, yappers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
                     background_rect = Rectangle(0,0, TILE_SIZE * tile_cols, TILE_SIZE * tile_rows)
                 pass
             
@@ -653,6 +688,8 @@ def main():
                 pass
             case GAME_STATE.PLAYING:
                 player.update(delta_time, game_level)
+                for yapper in yappers:
+                    yapper.update(delta_time)
                 
                 time_left_before_decrement -= delta_time
                 
@@ -723,7 +760,9 @@ def main():
                 draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width,bg_texture.height), background_rect, Vector2(0,0), 0.0, WHITE)
                 
                 # 1. Draw the Level
-                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text, level_end_texture,is_hitbox_mode, tile_rows, tile_cols)
+                draw_level(game_level, tile_floor_text, tile_half_text,tile_wall_text, level_end_texture,is_hitbox_mode, tile_rows, tile_cols, is_hitbox_mode)
+                for yapper in yappers:
+                    yapper.draw(is_hitbox_mode, yapper_texture)
 
                 # 2. Draw Collectibles
                 draw_coffees(coffees, coffee_texture,is_hitbox_mode)
