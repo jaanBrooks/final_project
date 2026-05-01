@@ -383,5 +383,16 @@ Technical plan / credit:
 Spent like an hour trying to figure it out by myself so I asked ai and it was literally a two line fix
 Commit message (debug):fixed jumping between two blocks from beneath bug
 Next to do:
-start making level 2 to implement freshmen 15 display
+start making level 2 to implement freshmen 15 displa
+
+Date: 2026/05/1 4:21 PM
+created level 2 template
+Implementation:
+copied level one and made it twice as big
+Technical plan / credit:
+simple copy and paste with name changing
+Commit message (feature): created level 2 and 3 template
+Next to do:
+start making level 2 to implement freshmen 15 display, and also have guy that makes you wait if you collide with him and makes you talk to him
+
 
