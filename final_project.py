@@ -127,6 +127,11 @@ class Player:
         self.running_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'run.png'))
         self.jump_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'jump.png'))
         self.wall_slide_middle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'wall_slide_middle.png'))
+        
+        self.slide_sound = load_sound(join("music_and_sound", "slide_sound.mp3"))
+        self.drink_sound = load_sound(join("music_and_sound", "drink_sound.mp3"))
+        self.yapping_sound = load_sound(join("music_and_sound", "yapping_sound.mp3"))
+        self.jump_sound = load_sound(join("music_and_sound", "jump_sound.mp3"))
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
@@ -159,6 +164,7 @@ class Player:
                 self.texture = self.running_texture
             
             case PLAYER_STATE.SLIDING:
+                play_sound(self.slide_sound)
                 self.anim.done = False
                 self.state = PLAYER_STATE.SLIDING
                 self.anim.last = 1
@@ -170,6 +176,7 @@ class Player:
                 self.texture = self.slide_start_texture
             
             case PLAYER_STATE.JUMPING:
+                play_sound(self.jump_sound)
                 self.state = PLAYER_STATE.JUMPING
                 self.texture = self.jump_texture
                 self.anim.last = 5
@@ -323,6 +330,7 @@ class Player:
     def handle_wall_jump_input(self):
         
         if IsKeyPressed(KEY_SPACE):
+            play_sound(self.jump_sound)
             self.is_wall_jumping = True
             self.is_wall_sliding = False
             self.wall_jump_lock_timer = WALL_JUMP_DURATION
@@ -344,6 +352,7 @@ class Player:
     def handle_left_and_right_input(self, dt):
         
         if IsKeyDown(KEY_LEFT_SHIFT) and not self.is_sprinting and self.coffee_count > 0:
+            play_sound(self.drink_sound)
             self.is_sprinting = True
             self.coffee_count -= 1
             self.sprint_timer += COFFEE_SPRINT_DURATION
@@ -426,6 +435,7 @@ class Player:
                 if level[row][col] == TILE_STATE.TILE_YAPPER:
                     tile_rect = (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                     if CheckCollisionRecs(player_rect, tile_rect):
+                        play_sound(self.yapping_sound)
                         self.yap_timer = YAP_DURATION
                         level[row][col] = TILE_STATE.AIR
                 elif level[row][col] == TILE_STATE.FLOOR or (level[row][col] == TILE_STATE.TILE_HALF) or (level[row][col] == TILE_STATE.TILE_WALL) or (level[row][col] == TILE_STATE.TILE_LEVEL_END) :
@@ -629,6 +639,7 @@ def update_camera(camera, player, world_width, world_height, screen_width, scree
 def main():
     # --- Initialization ---
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Raylib 2D Platformer Clone (Stomp Mechanic)".encode('utf-8'))
+    init_audio_device()
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
@@ -672,7 +683,11 @@ def main():
     tile_half_text = load_texture('tile_half.png')
     tile_wall_text = load_texture("tile_wall.png")
     yapper_texture = load_texture("yapper.png")
-
+    
+    #MUSIC and sound effects
+    background_music = load_music_stream(join("music_and_sound", "bg_music.mp3"))
+    play_music_stream(background_music)
+    set_music_volume(background_music, MUSIC_VOLUME)
     #background shapes
     coffee_count_rect = Rectangle(SCREEN_WIDTH - 55, SCREEN_HEIGHT - 30, 50, 10)
     coffee_count_rect_color_one = Color(245, 138, 56, 100) 
@@ -684,6 +699,7 @@ def main():
     while not WindowShouldClose():
         
         delta_time = GetFrameTime()
+        update_music_stream(background_music)
         if IsKeyPressed(KEY_H):
             is_hitbox_mode = not is_hitbox_mode
         # --- Update ---
@@ -779,9 +795,10 @@ def main():
                 
                 if beer_collected_indices:
                     for index in sorted(beer_collected_indices, reverse=True):
+                        play_sound(player.drink_sound)
                         beers.pop(index)
                         if player.freshmen_fifteen_meter < 15:
-                            player.freshmen_fifteen_meter += 3
+                            player.freshmen_fifteen_meter += 5
                            
                 if player.reach_level_end:
                     game_state = next_state
@@ -859,6 +876,7 @@ def main():
                 draw_text("TIME_LEFT before decrement: " + str(time_left_before_decrement), SCREEN_WIDTH -350, 90, 15, RED)
         EndDrawing()
     # --- De-Initialization ---
+    close_audio_device()
     CloseWindow()
 
 if __name__ == "__main__":

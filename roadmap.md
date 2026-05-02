@@ -455,3 +455,14 @@ sound effects
 refactoring
 transition state animations
 
+Date: 2026/05/02 4:54 PM
+Goal: SFX and music implemented
+Implementation:
+same implementation as mid semester project
+Technical plan / credit:
+Pixabay will put link in resources
+Commit message (feature): sfx and music
+Next to do:
+refactoring
+transition state animations
+
