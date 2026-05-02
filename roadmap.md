@@ -443,5 +443,15 @@ Commit message (feature): appropriate level and player reset
 Next to do:
 level 2 design layout
 
-
+Date: 2026/05/2 2:52 PM
+Goal: Finished level 2
+Implementation:
+just placed appropriate tiels
+Technical plan / credit:
+none
+Commit message (feature): level 2 implemented
+Next to do:
+sound effects
+refactoring
+transition state animations
 

@@ -29,7 +29,6 @@ def parse_level(level, tile_rows, tile_cols):
     Parses the level map, extracts all dynamic entities (coins, enemies), 
     replaces their spawn points with air, and returns the modified collision map and entity lists.
     """
-    coins = []
     enemies = []
     coffees = []
     yappers = []
@@ -41,14 +40,9 @@ def parse_level(level, tile_rows, tile_cols):
         for c in range(tile_cols):
             x = c * TILE_SIZE
             y = r * TILE_SIZE
-
-            if new_level[r][c] == TILE_STATE.COIN:
-                # Coin position is center
-                coins.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
-                new_level[r][c] = TILE_STATE.AIR 
             
-            elif new_level[r][c] == TILE_STATE.COFFEE:
-                coffees.append((x + TILE_SIZE / 2, y + TILE_SIZE / 2))
+            if new_level[r][c] == TILE_STATE.COFFEE:
+                coffees.append((x, y))
                 new_level[r][c] = TILE_STATE.AIR
             
             elif new_level[r][c] == TILE_STATE.TILE_YAPPER:
@@ -58,7 +52,7 @@ def parse_level(level, tile_rows, tile_cols):
                 beers.append((x, y))
                 new_level[r][c] = TILE_STATE.AIR
                 
-    return new_level, coins, enemies, coffees, yappers, beers
+    return new_level, enemies, coffees, yappers, beers
 
 
 # Utility function to get level parameters based on level number
@@ -66,14 +60,14 @@ def get_level_params(level_to_set):
     time_left_before_decrement = DURATION_BEFORE_DECREMENT
     
     if level_to_set == GAME_LEVEL.ONE:
-        game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
+        game_level, enemies, coffees, yappers, beers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
         time_left_in_level = LEVEL_ONE_DURATION
         
     elif level_to_set == GAME_LEVEL.TWO:
-        game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
+        game_level, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
         time_left_in_level = LEVEL_TWO_DURATION
        
-    return game_level, coins, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement
+    return game_level, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement
 
 
 # --- Game Object Classes ---
@@ -603,21 +597,6 @@ def draw_beers(beers, beer_texture,is_hitbox_mode):
         draw_texture_pro(beer_texture, Rectangle(0, 0, beer_texture.width, beer_texture.height), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
         if is_hitbox_mode:
             DrawRectangleLines(int(cx) + 8, int(cy) + 8, int(TILE_SIZE) - 16, int(TILE_SIZE) - 16, BLUE)
-def draw_coins(coins):
-    """Draws the active coins as small yellow diamonds (polygons)."""
-    radius = TILE_SIZE * 0.3 / 2 
-    
-    for cx, cy in coins:
-        v1 = Vector2(cx, cy - radius * 2)
-        v2 = Vector2(cx + radius * 1.5, cy)
-        v3 = Vector2(cx, cy + radius * 2)
-        v4 = Vector2(cx - radius * 1.5, cy)
-        
-        DrawTriangle(v1, v2, v4, YELLOW)
-        DrawTriangle(v2, v3, v4, GOLD)
-        
-        DrawLineV(v1, v3, BLACK)
-        DrawLineV(v2, v4, BLACK)
 
 
 def update_camera(camera, player, world_width, world_height, screen_width, screen_height):
@@ -653,7 +632,7 @@ def main():
     SetTargetFPS(60)
 
     # Prepare Level Data: Separate collision map from dynamic entities
-    game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
+    game_level, enemies, coffees, yappers, beers = parse_level(LEVEL_1, TILE_ROWS_LEVEL_1, TILE_COLS_LEVEL_1)
     tile_rows = TILE_ROWS_LEVEL_1
     tile_cols = TILE_COLS_LEVEL_1
     world_height = WORLD_HEIGHT_LEVEL_1
@@ -734,27 +713,27 @@ def main():
                     player.x = PLAYER_WIDTH * 2
                     player.y = world_height - TILE_SIZE * 2
                     player.start_y = player.y
-                    time_left_in_level = LEVEL_ONE_DURATION
+                    time_left_in_level = LEVEL_TWO_DURATION
                     time_left_before_decrement = DURATION_BEFORE_DECREMENT
                     tile_cols = TILE_COLS_LEVEL_2
                     tile_rows = TILE_ROWS_LEVEL_2
                     player.tile_rows = tile_rows
                     player.tile_cols = tile_cols
-                    game_level, coins, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
+                    game_level, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
                     background_rect = Rectangle(0,0, TILE_SIZE * tile_cols, TILE_SIZE * tile_rows)
                 pass
             
             case GAME_STATE.LOST:
                 if is_key_pressed(KEY_R):
                     player.reset()
-                    game_level, coins, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
+                    game_level, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
                     game_state = GAME_STATE.PLAYING
                 pass
             
             case GAME_STATE.PLAYING:
                 if IsKeyPressed(KEY_R):
                     player.reset()
-                    game_level, coins, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
+                    game_level, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
                     game_state = GAME_STATE.PLAYING
                 player.update(delta_time, game_level)
                 for yapper in yappers:
@@ -782,11 +761,11 @@ def main():
                 update_camera(camera, player, world_width, world_height, SCREEN_WIDTH, SCREEN_HEIGHT)
 
                 # Check for coin collection
-                collected_indices = player.check_collection(coins)
+                """  collected_indices = player.check_collection(coins)
                 if collected_indices:
                     for index in sorted(collected_indices, reverse=True):
                         coins.pop(index)
-                        score += 10
+                        score += 10 """
 
                 # Check for coffee collection
                 if player.coffee_count < COFFEE_MAX:
