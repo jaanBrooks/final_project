@@ -109,14 +109,14 @@ class Player:
         
     def startup(self):
         
-        self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
+        self.idle_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
-        self.slide_start_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_start.png'))
-        self.slide_middle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_middle.png'))
-        self.slide_end_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_end.png'))
-        self.running_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'run.png'))
-        self.jump_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'jump.png'))
-        self.wall_slide_middle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'wall_slide_middle.png'))
+        self.slide_start_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'slide_start.png'))
+        self.slide_middle_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'slide_middle.png'))
+        self.slide_end_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'slide_end.png'))
+        self.running_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'run.png'))
+        self.jump_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'jump.png'))
+        self.wall_slide_middle_texture = load_texture(join('Character_Assets','Character-No-Weapon', 'wall_slide_middle.png'))
         self.slide_sound = load_sound(join("music_and_sound", "slide_sound.mp3"))
         self.drink_sound = load_sound(join("music_and_sound", "drink_sound.mp3"))
         self.yapping_sound = load_sound(join("music_and_sound", "yapping_sound.mp3"))
@@ -660,7 +660,7 @@ def update_camera(camera, player, world_width, world_height, screen_width, scree
 # --- Main Game Logic ---
 def main():
     # --- Initialization ---
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Raylib 2D Platformer Clone (Stomp Mechanic)".encode('utf-8'))
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The Freshmen 15".encode('utf-8'))
     init_audio_device()
     SetTargetFPS(60)
 

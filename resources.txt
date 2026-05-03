@@ -11,3 +11,17 @@ https://www.youtube.com/watch?v=avtm_F9HU3c&t=32s
 https://share.google/etFlsPwaLexvK9tm7 coffee mug
 
 walljumping: https://gist.github.com/bendux/b6d7745ad66b3d48ef197a9d261dc8f6
+
+particles: https://github.com/nas-programmer/raylib_projects/blob/main/Particle%20System/main.cpp
+https://stackoverflow.com/questions/6339057/draw-transparent-rectangles-and-polygons-in-pygame
+
+
+Background: https://www.raylib.com/examples/textures/loader.html?name=textures_background_scrolling
+
+prompt for chat scale: if current_level_index == 0:
+    # for the ui to display the freshmen 15 meter i want to have a digital scale sprite, dont worry about putting numbers but the lttile number display should be blank and big enough for me to put the (+ player.freshmen 15 meter)
+
+prompt for yapper guy:
+can you generate a 1 row sprite sheet of a college student yapping (talking) can you make each frame 64 by 64 and maybe have it be 5 total frames?
+
+beer_texture https://share.google/BOn978xCuhKi7Xg7O
