@@ -466,3 +466,13 @@ Next to do:
 refactoring
 transition state animations
 
+Date: 2026/05/02 8:55 PM
+Goal: all transition animations implemented, as well pause, instructions, win, death screens etc eveything i was missing before
+Implementation:
+game state management just extended to use new screens for transition phases
+Technical plan / credit:
+used chatgpt for screen art
+Commit message (feature): pause, instruction screen, win screen, death screens all missing things
+Next to do:
+refactoring for code cleanliness
+

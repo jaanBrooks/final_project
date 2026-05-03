@@ -176,7 +176,6 @@ class Player:
                 self.texture = self.slide_start_texture
             
             case PLAYER_STATE.JUMPING:
-                play_sound(self.jump_sound)
                 self.state = PLAYER_STATE.JUMPING
                 self.texture = self.jump_texture
                 self.anim.last = 5
@@ -371,6 +370,7 @@ class Player:
     
     def handle_jump_input(self, dt):
         if IsKeyPressed(KEY_SPACE) and self.is_grounded:
+            play_sound(self.jump_sound)
             self.is_grounded = False
             self.vy = JUMP_VELOCITY
             self.transition(PLAYER_STATE.JUMPING)
@@ -513,6 +513,7 @@ class Player:
         
         self.is_sprinting = False
         self.sprint_timer = 0.0
+        self.coffee_count = 0
         self.sprint_speed_multiplier = 1.0
         self.particles = None
 
@@ -543,10 +544,7 @@ class Player:
                 DrawRectangleLines(int(self.x), int(self.y + self.height * 0.5), int(self.width), int(self.height * 0.5), RED)
             else:
                 DrawRectangleLines(int(self.x), int(self.y), int(self.width), int(self.height), RED)
-        draw_text(PLAYER_STATE.get_state(self.state),200,200,11, BLACK)
-        draw_text(str(self.sprint_timer),int(self.x),250,11, BLACK)
-        draw_text(str("is wall sliding: " + str(self.is_wall_sliding)),int(self.x),270,11, BLACK)
-        draw_text(str("is grounded: " + str(self.is_grounded)),int(self.x),290,11, BLACK)
+        
 
         if self.yap_timer > 0:
             draw_text(self.yap_message, int(self.x - (10* self.direction)),int( self.y - 10), 10, BLACK)
@@ -596,6 +594,7 @@ def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end
                 draw_ellipse(x + 20,y + 37,20,5,Color(42, 250, 87, 205))
                 if is_hitbox:
                     draw_rectangle_lines(x,y,TILE_SIZE,TILE_SIZE, GREEN)
+
 def draw_coffees(coffees, coffee_texture,is_hitbox_mode):
     for cx, cy in coffees:
         draw_texture_pro(coffee_texture, Rectangle(0, 0, 64, 64), Rectangle(cx,cy, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
@@ -658,6 +657,7 @@ def main():
     next_state = GAME_STATE.OFFICIAL_ENROLLMENT
     time_left_in_level = LEVEL_ONE_DURATION
     time_left_before_decrement = DURATION_BEFORE_DECREMENT
+    paused = False
     # --- Camera Initialization ---
     camera = Camera2D()
     camera.target = Vector2(player.x, player.y) 
@@ -665,24 +665,32 @@ def main():
     camera.rotation = 0.0
     camera.zoom = 1.0
     is_hitbox_mode = False
+    is_god_mode = False
     
     #textures
-    scale_texture = load_texture('scale.png')
-    beer_texture = load_texture("beer_texture.png")
-    coffee_texture = load_texture(join('Items','coffee.png'))
-    coffee_outline_texture = load_texture(join('Items','coffee_outline.png'))
-    bg_texture = load_texture('backgroundFP.png')
-    title_texture = load_texture('title_screen.png')
-    acceptance_texture = load_texture('acceptance.png')
-    level_one_end_texture = load_texture('level_1_end.png')
-    official_enrollment_texture = load_texture('official_enrollment.png')
-    montage_texture = load_texture('montage.png')
+    scale_texture = load_texture(join('non_player_assets', 'scale.png'))
+    beer_texture = load_texture(join('non_player_assets', 'beer_texture.png'))
+    coffee_texture = load_texture(join('non_player_assets', 'coffee.png'))
+    coffee_outline_texture = load_texture(join('non_player_assets', 'coffee_outline.png'))
+    bg_texture = load_texture(join('non_player_assets', 'backgroundFP.png'))
+    title_texture = load_texture(join('non_player_assets', 'title_screen.png'))
+    acceptance_texture = load_texture(join('non_player_assets', 'acceptance.png'))
+    level_one_end_texture = load_texture(join('non_player_assets', 'level_1_end.png'))
+    official_enrollment_texture = load_texture(join('non_player_assets', 'official_enrollment.png'))
+    montage_texture = load_texture(join('non_player_assets', 'montage.png'))
     level_end_texture = level_one_end_texture
+    dropped_out_texture = load_texture(join('non_player_assets', 'dropped_out.png'))
+    midterm_texture = load_texture(join('non_player_assets', 'midterm.png'))
+    midterm_upd_texture = load_texture(join('non_player_assets', 'midterm_update.png'))
+    out_of_time_texture = load_texture(join('non_player_assets', 'closed.png'))
+    retake_texture = load_texture(join('non_player_assets', 'handing_in_retake.png'))
+    transcript_texture = load_texture(join('non_player_assets', 'transcript.png'))
     
-    tile_floor_text = load_texture('tile_floor.png')
-    tile_half_text = load_texture('tile_half.png')
-    tile_wall_text = load_texture("tile_wall.png")
-    yapper_texture = load_texture("yapper.png")
+    tile_floor_text = load_texture(join('non_player_assets', 'tile_floor.png'))
+    tile_half_text = load_texture(join('non_player_assets', 'tile_half.png'))
+    tile_wall_text = load_texture(join('non_player_assets', 'tile_wall.png'))
+    yapper_texture = load_texture(join('non_player_assets', 'yapper.png'))
+    yapper_static_texture = load_texture(join('non_player_assets', 'yapper_static.png'))
     
     #MUSIC and sound effects
     background_music = load_music_stream(join("music_and_sound", "bg_music.mp3"))
@@ -702,12 +710,16 @@ def main():
         update_music_stream(background_music)
         if IsKeyPressed(KEY_H):
             is_hitbox_mode = not is_hitbox_mode
+        if IsKeyPressed(KEY_G):
+            is_god_mode = not is_god_mode
         # --- Update ---
         match game_state:
             
             case GAME_STATE.TITLE:
                 if IsKeyPressed(KEY_S):
                     game_state = GAME_STATE.INTRO_EMAIL
+                if IsKeyPressed(KEY_I):
+                    game_state = GAME_STATE.LVL_ONE_INST
             
             case GAME_STATE.INTRO_EMAIL:
                 if IsKeyPressed(KEY_S):
@@ -718,6 +730,26 @@ def main():
                     game_state = GAME_STATE.MONTAGE
             
             case GAME_STATE.MONTAGE:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.MIDTERM        
+            
+            case GAME_STATE.MIDTERM:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.MIDTERM_UPDATE
+            
+            case GAME_STATE.MIDTERM_UPDATE:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.LVL_TWO_INST
+            
+            case GAME_STATE.LVL_ONE_INST:
+                if IsKeyPressed(KEY_B):
+                    game_state = GAME_STATE.TITLE
+            case GAME_STATE.RETAKE:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.WIN
+                    
+            
+            case GAME_STATE.LVL_TWO_INST:
                 if IsKeyPressed(KEY_S):
                     world_width = WORLD_WIDTH_LEVEL_2
                     world_height = WORLD_HEIGHT_LEVEL_2
@@ -737,71 +769,86 @@ def main():
                     player.tile_cols = tile_cols
                     game_level, enemies, coffees, yappers, beers = parse_level(LEVEL_2, TILE_ROWS_LEVEL_2, TILE_COLS_LEVEL_2)
                     background_rect = Rectangle(0,0, TILE_SIZE * tile_cols, TILE_SIZE * tile_rows)
-                pass
+                    next_state = GAME_STATE.RETAKE
+                    
+            case GAME_STATE.RETAKE:
+                if IsKeyPressed(KEY_S):
+                    game_state = GAME_STATE.WIN
             
-            case GAME_STATE.LOST:
+            case GAME_STATE.DROPPED_OUT:
                 if is_key_pressed(KEY_R):
                     player.reset()
                     game_level, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
                     game_state = GAME_STATE.PLAYING
-                pass
             
-            case GAME_STATE.PLAYING:
-                if IsKeyPressed(KEY_R):
+            case GAME_STATE.OUT_OF_TIME:
+                if is_key_pressed(KEY_R):
                     player.reset()
                     game_level, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
                     game_state = GAME_STATE.PLAYING
-                player.update(delta_time, game_level)
-                for yapper in yappers:
-                    yapper.update(delta_time)
+            
+            case GAME_STATE.PLAYING:
                 
-                time_left_before_decrement -= delta_time
+                if is_key_pressed(KEY_P):
+                    paused = not paused
                 
-                if time_left_before_decrement <= 0:
-                    if level_num == GAME_LEVEL.ONE:
-                        time_left_in_level -= LEVEL_DURATION_DECREMENT
-                    else:
-                        time_left_in_level -= LEVEL_DURATION_DECREMENT + player.freshmen_fifteen_meter
-                    time_left_before_decrement = DURATION_BEFORE_DECREMENT
-                
-                if time_left_in_level <= 0:
-                    game_state = GAME_STATE.LOST
-                
-                if IsMouseButtonPressed(MOUSE_BUTTON_LEFT):
-                    mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera)
-                    player.x = mouse_world_pos.x
-                    player.y = mouse_world_pos.y
-                if player.y > world_height:
-                    player.reset()
+                if not paused:
+                    if IsKeyPressed(KEY_R):
+                        player.reset()
+                        game_level, enemies, coffees, yappers, beers, time_left_in_level, time_left_before_decrement = get_level_params(level_num)
+                        game_state = GAME_STATE.PLAYING
+                    player.update(delta_time, game_level)
+                    for yapper in yappers:
+                        yapper.update(delta_time)
+                    
+                    time_left_before_decrement -= delta_time
+                    
+                    if time_left_before_decrement <= 0:
+                        if level_num == GAME_LEVEL.ONE:
+                            time_left_in_level -= LEVEL_DURATION_DECREMENT
+                        else:
+                            time_left_in_level -= LEVEL_DURATION_DECREMENT + player.freshmen_fifteen_meter
+                        time_left_before_decrement = DURATION_BEFORE_DECREMENT
+                    
+                    if time_left_in_level <= 0:
+                        game_state = GAME_STATE.OUT_OF_TIME
+                    
+                    if IsMouseButtonPressed(MOUSE_BUTTON_LEFT) and is_god_mode:
+                        mouse_world_pos = GetScreenToWorld2D(GetMousePosition(), camera)
+                        player.x = mouse_world_pos.x
+                        player.y = mouse_world_pos.y
+                    
+                    if player.y > world_height:
+                        game_state = GAME_STATE.DROPPED_OUT
 
-                update_camera(camera, player, world_width, world_height, SCREEN_WIDTH, SCREEN_HEIGHT)
+                    update_camera(camera, player, world_width, world_height, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-                # Check for coin collection
-                """  collected_indices = player.check_collection(coins)
-                if collected_indices:
-                    for index in sorted(collected_indices, reverse=True):
-                        coins.pop(index)
-                        score += 10 """
+                    # Check for coin collection
+                    """  collected_indices = player.check_collection(coins)
+                    if collected_indices:
+                        for index in sorted(collected_indices, reverse=True):
+                            coins.pop(index)
+                            score += 10 """
 
-                # Check for coffee collection
-                if player.coffee_count < COFFEE_MAX:
-                    collected_coffee_indices = player.check_collection(coffees)
-                    if collected_coffee_indices:
-                        for index in sorted(collected_coffee_indices, reverse=True):
-                            coffees.pop(index)
-                            player.coffee_count += 1
-                
-                beer_collected_indices = player.check_collection(beers)
-                
-                if beer_collected_indices:
-                    for index in sorted(beer_collected_indices, reverse=True):
-                        play_sound(player.drink_sound)
-                        beers.pop(index)
-                        if player.freshmen_fifteen_meter < 15:
-                            player.freshmen_fifteen_meter += 5
-                           
-                if player.reach_level_end:
-                    game_state = next_state
+                    # Check for coffee collection
+                    if player.coffee_count < COFFEE_MAX:
+                        collected_coffee_indices = player.check_collection(coffees)
+                        if collected_coffee_indices:
+                            for index in sorted(collected_coffee_indices, reverse=True):
+                                coffees.pop(index)
+                                player.coffee_count += 1
+                    
+                    beer_collected_indices = player.check_collection(beers)
+                    
+                    if beer_collected_indices:
+                        for index in sorted(beer_collected_indices, reverse=True):
+                            play_sound(player.drink_sound)
+                            beers.pop(index)
+                            if player.freshmen_fifteen_meter < 15:
+                                player.freshmen_fifteen_meter += 5
+                            
+                    if player.reach_level_end:
+                        game_state = next_state
 
                     
 
@@ -811,26 +858,83 @@ def main():
         ClearBackground(SKYBLUE)
         match game_state:
             
+            case GAME_STATE.LVL_ONE_INST:
+                draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width, bg_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("A: GO LEFT", 10, 30, 10, BLACK)
+                draw_text("D: GO RIGHT", 10, 50, 10, BLACK)
+                draw_text("S: SLIDE", 10, 70, 10, BLACK)
+                draw_text("SPACE: JUMP AND WALL JUMP", 10, 90, 10, BLACK)
+                draw_text("R: RESET LEVEL", 10, 110, 10, BLACK)
+                
+                draw_text("DEV TOOLS", 10, 150, 15, BLACK)
+                draw_text("H: HITBOX MODE", 10, 185, 10, BLACK)
+                draw_text("G: GOD MODE( MOUSE CLICK WILL MOVE CHARACTER TO CLICKED POS)", 10, 205, 10, BLACK)
+                
+                draw_text("PRESS B TO RETURN TO TITLE", 20, SCREEN_HEIGHT - 30, 20, RED)
+            
+            case GAME_STATE.LVL_TWO_INST:
+                draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width, bg_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                
+                draw_texture_pro(yapper_static_texture,Rectangle(0,0,yapper_static_texture.width, yapper_static_texture.height), Rectangle(20,20,yapper_static_texture.width, yapper_static_texture.height ), Vector2(0,0), 0.0, WHITE)
+                draw_text("AVOID YAPPERS, THEY WILL WASTE TIME YAPPING TO YOU", 25 + yapper_static_texture.width, 20, 20, BLACK)
+                
+                draw_texture_pro(beer_texture, Rectangle(0,0,beer_texture.width,beer_texture.height), Rectangle(20, 150, 50, 50), Vector2(0,0), 0.0, WHITE)
+                draw_text("AVOID BEERS, THEY WILL ADD 5 POUNDS TO YOUR FRESHMEN 15 METER", 75, 150, 17, BLACK)
+                
+                draw_texture_pro(scale_texture, Rectangle(0,0,scale_texture.width,scale_texture.height), Rectangle(20, 250, 50, 50), Vector2(0,0), 0.0, WHITE)
+                draw_text("WATCH YOUR FRESHMEN 15 METER, ", 25 + 50, 250, 20, BLACK)
+                draw_text("IT WILL MAKE MOVEMENT TAKE LONGER (time runs out faster)", 25 + 50, 275, 20, BLACK)
+                
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, RED)
+            
+            case GAME_STATE.OUT_OF_TIME:
+                draw_texture_pro(out_of_time_texture,Rectangle(0,0,out_of_time_texture.width, out_of_time_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("GAME OVER: YOU RAN OUT OF TIME", 30, 20, 40, RED)
+                draw_text("PRESS R to Restart Level", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+            
             case GAME_STATE.TITLE:
                 draw_texture_pro(title_texture, Rectangle(0,0,title_texture.width, title_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
-                draw_text("PRESS S to START", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 5, 30, WHITE)
+                draw_text("PRESS S to START", 20, SCREEN_HEIGHT - 80, 30, WHITE)
+                draw_text("PRESS I FOR INSTRUCTIONS", 20, SCREEN_HEIGHT  - 40, 30, WHITE)
             
             case GAME_STATE.INTRO_EMAIL:
                 draw_texture_pro(acceptance_texture, Rectangle(0,0,acceptance_texture.width, acceptance_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
-                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, RED)
             
             case GAME_STATE.MONTAGE:
                 draw_texture_pro(montage_texture, Rectangle(0,0,montage_texture.width, montage_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
                 draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
                 draw_text("THE FOLLOWING WEEKS. . .", 20, 40, 30, WHITE)
             
+            case GAME_STATE.MIDTERM:
+                draw_texture_pro(midterm_texture, Rectangle(0,0,midterm_texture.width, midterm_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 80, SCREEN_HEIGHT - 45, 24, RED)
+            
+            case GAME_STATE.MIDTERM_UPDATE:
+                draw_texture_pro(midterm_upd_texture, Rectangle(0,0,midterm_upd_texture.width, midterm_upd_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 60, SCREEN_HEIGHT - 45, 24, RED)
+            
             case GAME_STATE.OFFICIAL_ENROLLMENT:
                 draw_texture_pro(official_enrollment_texture, Rectangle(0,0,official_enrollment_texture.width, official_enrollment_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
-                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, WHITE)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, RED)
+            
+            case GAME_STATE.DROPPED_OUT:
+                draw_texture_pro(dropped_out_texture, Rectangle(0,0,dropped_out_texture.width,dropped_out_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,),Vector2(0,0), 0.0, WHITE)
+                draw_text("GAME OVER: YOU 'DROPPED OUT' ", 30, 60, 40, RED)
+                draw_text("PRESS R TO RESTART LEVEL, ESC TO QUIT", SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT - 45, 24, WHITE)
             
             case GAME_STATE.LOST:
                 draw_text("YOU_LOST", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 10, RED)
-            
+            case GAME_STATE.RETAKE:
+                draw_texture_pro(retake_texture, Rectangle(0,0,retake_texture.width,retake_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,),Vector2(0,0), 0.0, WHITE)
+                draw_text("Submitting retake...", 20, 20, 20, BLACK)
+                draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, RED)
+                
+            case GAME_STATE.WIN:
+                draw_texture_pro(transcript_texture, Rectangle(0,0,transcript_texture.width,transcript_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,),Vector2(0,0), 0.0, WHITE)
+                draw_rectangle(0,20,SCREEN_WIDTH, 28, WHITE)
+                draw_text("GAME OVER: CONGRATS YOU PASSED FRESHMEN YEAR", 20, 20, 28, GREEN)
+                draw_text("PRESS ESC to exit", SCREEN_WIDTH - 300, SCREEN_HEIGHT - 45, 24, RED)
             case GAME_STATE.PLAYING:
                 # Start the 2D camera mode
                 BeginMode2D(camera)
@@ -855,25 +959,34 @@ def main():
                 
                 # 5. Draw HUD (Drawn on screen, outside of BeginMode2D)
                 
-                debug_text = f"Grounded: {player.is_grounded} | Enemies: {len(enemies)}".encode('utf-8')
-                DrawText(debug_text, 10, 10, 20, BLACK) 
-                draw_text(str(level_num), 300, 20, 20, RED)
                 draw_rectangle_rounded_lines_ex(coffee_count_rect, 2.0, 10,1.0,WHITE)
                 draw_rectangle_rounded(coffee_count_rect, 2.0, 10,coffee_count_rect_color_one)
                 draw_text("COFFEE",SCREEN_WIDTH - 50, SCREEN_HEIGHT - 30, 9, YELLOW)
                 draw_texture_pro(coffee_outline_texture, Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 draw_texture_pro(coffee_outline_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
-                draw_text("Coffee Count:" + str(player.coffee_count), 0, 40, 10, WHITE)
                 draw_rectangle_rounded(coffee_hud_bg_rect, 1.0, 5, coffee_hud_bg_rect_color)
                 if player.coffee_count >= 1:
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 if player.coffee_count >= 2:
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
+                
                 if level_num != GAME_LEVEL.ONE:
                     draw_texture_pro(scale_texture, Rectangle(0,0,scale_texture.width,scale_texture.height), Rectangle(SCREEN_WIDTH // 2 - (50), 20, 100, 100), Vector2(0,0), 0.0, WHITE)
                     draw_text("+" + str(player.freshmen_fifteen_meter) + " lbs", SCREEN_WIDTH // 2 - (22), 38, 14, RED  )
-                draw_text("TIME_LEFT: " + str(time_left_in_level), SCREEN_WIDTH -160, 60, 15, RED)
-                draw_text("TIME_LEFT before decrement: " + str(time_left_before_decrement), SCREEN_WIDTH -350, 90, 15, RED)
+                
+                draw_rectangle(SCREEN_WIDTH - 200, 40, 170, 20, WHITE)
+                draw_text("TIME_LEFT: " + str(time_left_in_level), SCREEN_WIDTH -200, 40, 20, RED)
+                
+                
+                if is_god_mode:
+                    draw_text("GODMODE ON",0,20, 15, RED)
+                
+                if paused:
+                    draw_texture_pro(bg_texture,Rectangle(0,0,bg_texture.width, bg_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), Vector2(0,0), 0.0, WHITE)
+                    draw_text("PAUSED", 20, 20, 40, RED)
+                    draw_text("PRESS P TO RESUME", 20, 80, 20, BLACK)
+                    draw_text("PRESS ESC TO QUIT", 20, 120, 20, BLACK)
+        
         EndDrawing()
     # --- De-Initialization ---
     close_audio_device()
