@@ -10,18 +10,6 @@ from game_enums import *
 from os.path import join
 from levels import *
 
-# --- Game Constants ---
-
-
-# --- Tilemap Definitions ---
-""" TILE_AIR = 0
-TILE_SOLID = 1
-TILE_COIN = 2 
-TILE_ENEMY = 3 
-TILE_SOLID_TOP_HALF = 4
-TILE_COFFEE = 5
-"""
-
 # --- Utility Functions ---
 
 def parse_level(level, tile_rows, tile_cols):
@@ -85,6 +73,7 @@ class Player:
         self.vy = 0.0
         self.is_grounded = False
         self.is_sprinting = True
+        
         self.state = PLAYER_STATE.IDLE
         self.anim = Animation(0, 7, 0, 1, .1, .1, AnimationType.REPEATING, 0, 8)
         self.frame = self.anim.frame(PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT)
@@ -119,6 +108,7 @@ class Player:
         self.yap_message = "Blah BLAH blah bLah . . . ."
         
     def startup(self):
+        
         self.idle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'idle.png'))
         self.texture = self.idle_texture   
         self.slide_start_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'slide_start.png'))
@@ -127,14 +117,15 @@ class Player:
         self.running_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'run.png'))
         self.jump_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'jump.png'))
         self.wall_slide_middle_texture = load_texture(join('CharacterPack-Version1','Character-No-Weapon', 'wall_slide_middle.png'))
-        
         self.slide_sound = load_sound(join("music_and_sound", "slide_sound.mp3"))
         self.drink_sound = load_sound(join("music_and_sound", "drink_sound.mp3"))
         self.yapping_sound = load_sound(join("music_and_sound", "yapping_sound.mp3"))
         self.jump_sound = load_sound(join("music_and_sound", "jump_sound.mp3"))
+   
     def get_rect(self):
         """Returns the player's collision bounding box (top-left, width, height)."""
         return (self.x, self.y, self.width, self.height)
+    
     def get_rect_sliding(self):
         return self.x, self.y + PLAYER_HEIGHT * 0.5, self.width, self.height * 0.5
     
@@ -198,10 +189,12 @@ class Player:
     def update(self, delta_time, level):
         # 1. Handle Input (Horizontal Movement)
         self.sprint_speed_multiplier = 1.0
+        
         if self.yap_timer >= 0:
             self.yap_timer -= delta_time
             if self.yap_timer < 0:
                 self.yap_timer = 0
+        
         if self.wall_jump_lock_timer > 0:
             self.wall_jump_lock_timer -= delta_time
             self.vx = WALL_JUMP_POWER.x * self.direction
@@ -224,7 +217,9 @@ class Player:
                     self.handle_jump_input(delta_time)
             
             case PLAYER_STATE.RUNNING:
+                
                 self.handle_speed_boost(delta_time)
+                
                 if self.yap_timer == 0:
                     self.handle_jump_input(delta_time)
                 
@@ -233,13 +228,18 @@ class Player:
                 
                 if IsKeyPressed(KEY_S) and self.yap_timer == 0:
                     self.transition(PLAYER_STATE.SLIDING)
+                
                 if self.vx == 0:
                     self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.SLIDING:
+                
                 will_bang_head = self.check_slide_head_collision(level, self.tile_rows, self.tile_cols )
+                
                 self.handle_speed_boost(delta_time)
+                
                 self.vx = SLIDE_VELOCITY * self.direction.value   
+                
                 if self.texture == self.slide_start_texture:
                     
                     if self.anim.done:
@@ -253,6 +253,7 @@ class Player:
                         self.anim.done = False
                 
                 elif self.texture == self.slide_middle_texture:
+                    
                     if self.anim.done and not will_bang_head:
                         self.texture = self.slide_end_texture
                         self.anim.start = 0
@@ -262,25 +263,32 @@ class Player:
                         self.anim.duration_left = self.anim.duration
                         self.anim.sprites_in_row = 2
                         self.anim.done = False
+                    
                     elif will_bang_head and self.anim.done:
                         self.vx = SLIDE_VELOCITY * self.direction * .8
                 else:
+                    
                     if self.anim.done:
                         self.vx = SLIDE_VELOCITY * self.direction * .2
+                        
                         if not self.check_slide_head_collision(level, self.tile_rows, self.tile_cols):
                             self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.JUMPING:
+                
                 self.handle_speed_boost(delta_time)
+                
                 if self.yap_timer == 0:
                     self.handle_jump_input(delta_time)
                 
                 if not self.is_wall_jumping and self.yap_timer == 0:
                     self.handle_left_and_right_input(delta_time)
+                
                 if self.is_grounded:
                     self.transition(PLAYER_STATE.IDLE)
             
             case PLAYER_STATE.WALL_SLIDING:
+                
                 if not self.is_wall_sliding:
                     if self.is_grounded:
                         self.transition(PLAYER_STATE.IDLE)
@@ -289,6 +297,7 @@ class Player:
                 else:
                     self.vx = PLAYER_SPEED * self.direction # need this so the player keeps pressing into the wall and we get a collision every frame
                     self.handle_wall_jump_input()
+        
         if self.particles:
             self.particles.update(Vector2(self.x + self.width / 2, self.y + self.height), delta_time)
         
@@ -330,6 +339,7 @@ class Player:
         
         if IsKeyPressed(KEY_SPACE):
             play_sound(self.jump_sound)
+            
             self.is_wall_jumping = True
             self.is_wall_sliding = False
             self.wall_jump_lock_timer = WALL_JUMP_DURATION
@@ -356,11 +366,13 @@ class Player:
             self.coffee_count -= 1
             self.sprint_timer += COFFEE_SPRINT_DURATION
             self.particles = System(Vector2(self.x + self.width / 2, self.y + self.height))
+        
         if IsKeyDown(KEY_A):
             self.vx = -PLAYER_SPEED * self.sprint_speed_multiplier
             self.direction = Direction.LEFT
             if self.is_grounded:
                 self.transition(PLAYER_STATE.RUNNING)
+        
         elif IsKeyDown(KEY_D):
             self.vx = PLAYER_SPEED * self.sprint_speed_multiplier
             self.direction = Direction.RIGHT
@@ -369,6 +381,7 @@ class Player:
         return
     
     def handle_jump_input(self, dt):
+        
         if IsKeyPressed(KEY_SPACE) and self.is_grounded:
             play_sound(self.jump_sound)
             self.is_grounded = False
@@ -376,6 +389,7 @@ class Player:
             self.transition(PLAYER_STATE.JUMPING)
             self.can_big_jump = True
             self.jumpTimeTimer = JUMP_TIME
+        
         if IsKeyDown(KEY_SPACE) and self.can_big_jump:
             if self.jumpTimeTimer > 0:
                 self.vy = JUMP_VELOCITY
@@ -412,10 +426,13 @@ class Player:
                     if CheckCollisionRecs(player_norm_rect, tile_rect) and not CheckCollisionRecs(player_slide_rect, tile_rect):
                         return True
         return False
+    
     def handle_tile_collision(self, level, axis, tile_rows, tile_cols):
         """Performs AABB collision checks against solid tiles and resolves the collision."""
+        
         if self.state == PLAYER_STATE.SLIDING:
             player_rect = self.get_rect_sliding()
+        
         else:
             player_rect = self.get_rect()
         px, py, pw, ph = player_rect
@@ -473,6 +490,7 @@ class Player:
                 
                         
     def check_collection(self, collectibles):
+       
         """Checks for collision with collectibles and returns indices of collected items."""
         collected_indices = []
         if self.state == PLAYER_STATE.SLIDING:
@@ -532,13 +550,16 @@ class Player:
 
     def draw(self, is_hitbox_visible):
         """Draws the player at their world coordinates."""
-        #DrawRectangle(int(self.x), int(self.y), int(self.width), int(self.height), BLUE) 
+        
         draw_texture_pro(self.texture, self.frame, Rectangle(self.x - ((PLAYER_TILE_WIDTH / 3) + 5), self.y - PLAYER_TILE_HEIGHT / 2.2, PLAYER_TILE_WIDTH, PLAYER_TILE_HEIGHT), Vector2(0, 0), 0.0, WHITE)
+        
         if self.is_sprinting:
             DrawRectangleLines(int(self.x), int(self.y)+ int(self.height) + 3,40, 6, BROWN)
             DrawRectangleGradientV(int(self.x), int(self.y)+ int(self.height) + 3,int(40 * self.sprint_timer / COFFEE_SPRINT_DURATION), 6, ORANGE, WHITE)
+        
         if self.particles:
             self.particles.draw()
+        
         if is_hitbox_visible:
             if self.state == PLAYER_STATE.SLIDING:
                 DrawRectangleLines(int(self.x), int(self.y + self.height * 0.5), int(self.width), int(self.height * 0.5), RED)
@@ -550,6 +571,7 @@ class Player:
             draw_text(self.yap_message, int(self.x - (10* self.direction)),int( self.y - 10), 10, BLACK)
             DrawRectangleLines(int(self.x - 15), int( self.y - 20),140, 9, BLACK)
             DrawRectangleGradientV(int(self.x - 15), int( self.y - 20),int(140 * self.yap_timer / YAP_DURATION), 9, PURPLE, RED)
+
 class Yapper:
     def __init__(self, x, y):
         self.x = x
@@ -565,6 +587,7 @@ class Yapper:
         draw_texture_pro(yap_texture, self.frame, Rectangle(self.x, self.y, TILE_SIZE, TILE_SIZE), Vector2(0, 0), 0.0, WHITE)
         if is_hitbox_visible:
             DrawRectangleLines(int(self.x), int(self.y), TILE_SIZE, TILE_SIZE, PURPLE)
+
 # --- Drawing and Camera Functions (Unchanged) ---
                 
 def draw_level(level, tile_floor_text, tile_half_text, tile_wall_text, level_end_texture, is_hitbox, TILE_ROWS, TILE_COLS, is_hitbox_mode):
@@ -650,14 +673,16 @@ def main():
     level_num = GAME_LEVEL.ONE
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
+    
     player = Player(TILE_SIZE * 2, TILE_SIZE * 12)
     player.startup() # Load player textures/animations
-    score = 0
+    
     game_state = GAME_STATE.TITLE
     next_state = GAME_STATE.OFFICIAL_ENROLLMENT
     time_left_in_level = LEVEL_ONE_DURATION
     time_left_before_decrement = DURATION_BEFORE_DECREMENT
     paused = False
+    
     # --- Camera Initialization ---
     camera = Camera2D()
     camera.target = Vector2(player.x, player.y) 
@@ -685,7 +710,6 @@ def main():
     out_of_time_texture = load_texture(join('non_player_assets', 'closed.png'))
     retake_texture = load_texture(join('non_player_assets', 'handing_in_retake.png'))
     transcript_texture = load_texture(join('non_player_assets', 'transcript.png'))
-    
     tile_floor_text = load_texture(join('non_player_assets', 'tile_floor.png'))
     tile_half_text = load_texture(join('non_player_assets', 'tile_half.png'))
     tile_wall_text = load_texture(join('non_player_assets', 'tile_wall.png'))
@@ -696,6 +720,7 @@ def main():
     background_music = load_music_stream(join("music_and_sound", "bg_music.mp3"))
     play_music_stream(background_music)
     set_music_volume(background_music, MUSIC_VOLUME)
+    
     #background shapes
     coffee_count_rect = Rectangle(SCREEN_WIDTH - 55, SCREEN_HEIGHT - 30, 50, 10)
     coffee_count_rect_color_one = Color(245, 138, 56, 100) 
@@ -708,10 +733,12 @@ def main():
         
         delta_time = GetFrameTime()
         update_music_stream(background_music)
+        
         if IsKeyPressed(KEY_H):
             is_hitbox_mode = not is_hitbox_mode
         if IsKeyPressed(KEY_G):
             is_god_mode = not is_god_mode
+        
         # --- Update ---
         match game_state:
             
@@ -925,16 +952,18 @@ def main():
             
             case GAME_STATE.LOST:
                 draw_text("YOU_LOST", SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 10, RED)
+            
             case GAME_STATE.RETAKE:
                 draw_texture_pro(retake_texture, Rectangle(0,0,retake_texture.width,retake_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,),Vector2(0,0), 0.0, WHITE)
-                draw_text("Submitting retake...", 20, 20, 20, BLACK)
+                draw_text("Submitting retake...", 20, 20, 30, WHITE)
                 draw_text("PRESS S to CONTINUE", SCREEN_WIDTH // 2 - 120, SCREEN_HEIGHT - 45, 24, RED)
                 
             case GAME_STATE.WIN:
                 draw_texture_pro(transcript_texture, Rectangle(0,0,transcript_texture.width,transcript_texture.height), Rectangle(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,),Vector2(0,0), 0.0, WHITE)
                 draw_rectangle(0,20,SCREEN_WIDTH, 28, WHITE)
-                draw_text("GAME OVER: CONGRATS YOU PASSED FRESHMEN YEAR", 20, 20, 28, GREEN)
+                draw_text("GAME OVER: CONGRATS YOU PASSED FRESHMEN FALL", 20, 20, 28, GREEN)
                 draw_text("PRESS ESC to exit", SCREEN_WIDTH - 300, SCREEN_HEIGHT - 45, 24, RED)
+            
             case GAME_STATE.PLAYING:
                 # Start the 2D camera mode
                 BeginMode2D(camera)
@@ -965,6 +994,7 @@ def main():
                 draw_texture_pro(coffee_outline_texture, Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 draw_texture_pro(coffee_outline_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 100, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 draw_rectangle_rounded(coffee_hud_bg_rect, 1.0, 5, coffee_hud_bg_rect_color)
+                
                 if player.coffee_count >= 1:
                     draw_texture_pro(coffee_texture,Rectangle(1, 1, 62, 63), Rectangle(SCREEN_WIDTH - 45, SCREEN_HEIGHT - 65, 32, 32), Vector2(0, 0), 0.0, WHITE)
                 if player.coffee_count >= 2:

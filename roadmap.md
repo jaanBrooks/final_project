@@ -476,3 +476,7 @@ Commit message (feature): pause, instruction screen, win screen, death screens a
 Next to do:
 refactoring for code cleanliness
 
+Date: 2026/05/02 9:20
+Last little refactoring and code cleanup done
+Next to do:
+screenshots
