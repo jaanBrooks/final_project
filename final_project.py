@@ -674,7 +674,7 @@ def main():
     # Game State Variables
     # Player starts at TILE_SIZE * 2, TILE_SIZE * 2
     
-    player = Player(TILE_SIZE * 2, TILE_SIZE * 12)
+    player = Player(TILE_SIZE * 2, world_height - TILE_SIZE * 2)
     player.startup() # Load player textures/animations
     
     game_state = GAME_STATE.TITLE
