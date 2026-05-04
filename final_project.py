@@ -333,7 +333,7 @@ class Player:
         self.frame.width *= self.direction
     
     def check_wall_slide(self):
-        return self.collided_with_x and not self.is_grounded and (IsKeyDown(KEY_A) and self.direction== Direction.LEFT or IsKeyDown(KEY_D) and self.direction == Direction.RIGHT)
+        return self.collided_with_x and not self.is_grounded and (IsKeyDown(KEY_A) or IsKeyDown(KEY_D))
     
     def handle_wall_jump_input(self):
         
