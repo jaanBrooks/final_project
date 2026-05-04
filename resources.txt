@@ -25,3 +25,5 @@ prompt for yapper guy:
 can you generate a 1 row sprite sheet of a college student yapping (talking) can you make each frame 64 by 64 and maybe have it be 5 total frames?
 
 beer_texture https://share.google/BOn978xCuhKi7Xg7O
+
+background https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fexplore.colgate.edu%2Fa-sense-of-place%2F&ved=0CBYQjRxqFwoTCPjskM_TnpQDFQAAAAAdAAAAABAF&opi=89978449
