@@ -360,7 +360,7 @@ class Player:
             
     def handle_left_and_right_input(self, dt):
         
-        if IsKeyDown(KEY_LEFT_SHIFT) and not self.is_sprinting and self.coffee_count > 0:
+        if IsKeyPressed(KEY_LEFT_SHIFT) and not self.is_sprinting and self.coffee_count > 0:
             play_sound(self.drink_sound)
             self.is_sprinting = True
             self.coffee_count -= 1
