@@ -72,7 +72,7 @@ class Player:
         self.vx = 0.0
         self.vy = 0.0
         self.is_grounded = False
-        self.is_sprinting = True
+        self.is_sprinting = False
         
         self.state = PLAYER_STATE.IDLE
         self.anim = Animation(0, 7, 0, 1, .1, .1, AnimationType.REPEATING, 0, 8)
