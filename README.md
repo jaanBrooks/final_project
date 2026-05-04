@@ -4,13 +4,46 @@
 # AUTHOR: JAAN BROOKS 
 ![alt text](Title_Screenshot.png)
 
+## Table of Contents
+
+- [Introduction](#introduction)
+  - [Game Summary](#game-summary)
+  - [Inspiration](#inspiration)
+    - [Personal Inspiration](#personal-inspiration)
+    - [Gameplay inspiration](#gameplay-inspiration)
+  - [Player experience](#player-experience)
+  - [Platform](#platform)
+  - [Software](#software)
+  - [Genre](#genre)
+  - [Target Audience](#target-audience)
+- [Concept](#concept)
+  - [Gameplay overview and experience](#gameplay-overview-and-experience)
+  - [Setting and theme interpretation](#setting-and-theme-interpretation)
+  - [Game Narrative analysis (Action and Enigm)](#game-narrative-analysis-action-and-enigm)
+    - [Action code](#action-code)
+    - [Enigma code](#enigma-code)
+  - [Game mechanics](#game-mechanics)
+    - [First level and primary mechanics](#first-level-and-primary-mechanics)
+    - [Second Level Mechanics](#second-level-mechanics)
+  - [Level progression](#level-progression)
+  - [Controls](#controls)
+- [Technical Walkthrough Section](#technical-walkthrough-section)
+  - [Mechanic One: Wall Sliding and Jumping](#mechanic-one-wall-sliding-and-jumping)
+  - [Mechanic 2: Freshmen 15 Meter](#mechanic-2-freshmen-15-meter)
+- [Art Implementation](#art-implementation)
+- [Project Time Estimation and Distribution](#project-time-estimation-and-distribution)
+- [Credits and References](#credits-and-references)
+- [AI Intervention](#ai-intervention)
+- [Classmate contribution](#classmate-contribution)
+- [Video Demo](#video-demo)
+
 ## INTRODUCTION
 ### Game Summary: 
 The average Colgate student remembers fondly the moment they opened their acceptance letter. For many of us who's dream school was Colgate, seeing that you were accepted ushered in intense emotions of excitement and joy. 
 
 However, in the coming months, many of us would learn that while college would be the time of our lives, it would also bring with it new levels of stress associated with deadlines, responsibilities, and generally balancing work with play. 
 
-THE FRESHMEN 15 is a speedrunning type game that encapsulates these mixed emotions and experiences. Fun is to be had with the platforming and interactions you have along the way, but you must balance this with tending to your collegiate responsibilites (getting to the checkpoint on time). If you've ever struggled with time management, responsibilites, work life balance, and of course the ubiquitous [Freshmen 15](https://en.wikipedia.org/wiki/Freshman_15) then this game will resonate with you.
+THE FRESHMEN 15 is a speedrunning type game that encapsulates these mixed emotions and experiences. Fun is to be had with the platforming and interactions you have along the way, but you must balance this with tending to your collegiate responsibilites (getting to the checkpoint on time). If you've ever struggled with time management, responsibilites, work life balance, and of course the ubiquitous [Freshmen 15](https://en.wikipedia.org/wiki/Freshman_15) then this game will resonate with you. If unfamiliar with the term freshmen 15 click the link on "Freshmen 15" to read more its quite funny.
 
 ___ 
 
@@ -164,7 +197,7 @@ While a simple game, I'd like to go over the process of implementation and give 
 
 Code commits ranged from 10 minutes to sometimes 5 hours between commits depending on the complexity of the problem that I was working on. There were approximately 42 commits and I'd estimate conservatively that on average, the time per commit was 1 hour (Likely more), so at a low estimation, simply committing code estimates 42 hours of time.
 
-While writing code is the largest part of this project, there are also non-coding aspects that take up time. For instance, there was the searching the web for raylib implementations of game mechanics, researching sprites, talking and discussing with other classmates regarding their implementations, and additionally creating supplemental documents such as this to go along with the game. I'd conservatively put the amount of time for these elements to be around at minimum 15-20 hours.
+While writing code is the largest part of this project, there are also non-coding aspects that take up time. For instance, there was the searching the web for raylib implementations of game mechanics, talking and discussing with other classmates regarding their implementations, and additionally creating supplemental documents such as this to go along with the game. I'd conservatively put the amount of time for these elements to be around at minimum 15-20 hours.
 
 There are other things too like play-testing, image manipulation, sprite finding and asset finding, github merge conflicts, feedback from friends, small refactors and debugs that don't merit commits, which especially the image and asset finding took a lot of time and many times I would implement a certain sprite only to find it didn't fit the theme. I'd estimate conservatively atleast another 10 hours at the bare minimum for these things. 
 
@@ -185,6 +218,18 @@ BG music : https://pixabay.com/music/electronic-cyber-jump-499060/.
 Sliding sfx: https://pixabay.com/sound-effects/film-special-effects-simple-whoosh-382724/. 
 
 coffee and beer sfx: https://pixabay.com/sound-effects/people-coffee-slurp-7-94517/. 
+
+#### GAME ASSETS:
+Coffee mug https://share.google/etFlsPwaLexvK9tm7  
+
+Beer texture https://share.google/BOn978xCuhKi7Xg7O
+
+Background  https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fexplore.colgate.edu%2Fa-sense-of-place%2F&ved=0CBYQjRxqFwoTCPjskM_TnpQDFQAAAAAdAAAAABAF&opi=89978449. 
+
+Player texture pack https://monopixelart.itch.io/character-pack/download/eyJpZCI6MjkxMjQ1NywiZXhwaXJlcyI6MTc3NjcyMjc4Nn0%3d%2eowqBwbVFL%2fr7%2fvw9ARcBlW9Sxgs%3d. 
+
+ALL OTHER ASSETS WERE GENERATED IN CHATGPT EXCLUSIVELY SEE AI USE SECTION FOR MORE
+
 
 ### Code and tutorials used
 variable jump height mechanics: https://github.com/ProjectMarzDev/Knight-Game/blob/main/Knight%20Game/knight.cpp
@@ -218,6 +263,7 @@ Liam Davis: My anim.py file was borrowed from a lab which we did together
 
 ___ 
 
-
+## VIDEO DEMO
+https://drive.google.com/file/d/1RVLbjwRDrh9mUgZPmnt_j79eVuvM8dXo/view?usp=share_link
 
 
